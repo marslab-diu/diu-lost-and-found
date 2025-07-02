@@ -2,7 +2,7 @@
 
 <img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="300" />
 
-<div> </div>
+<br>
 
 <p>
   <em>A comprehensive Lost and Found management system for Daffodil International University</em>
