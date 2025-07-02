@@ -1,10 +1,12 @@
 # 📦 DIU Lost & Found System
 
-> **⚠️ Project Status: Early Development (< 1% Complete)**
+> **⚠️ Project Status: Early Development**
 > 
 > This project is in its initial development phase. Features and documentation are actively being developed.
 
 <div align="center">
+
+<img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="200" />
 
 ![Version](https://img.shields.io/badge/version-0.0.1-red)
 ![Status](https://img.shields.io/badge/status-early%20development-orange)
@@ -225,14 +227,9 @@ We welcome contributions from the DIU community! Here's how you can help:
 ## 📞 Contact & Support
 
 ### Project Team
-- **Lead Developer**: [Your Name]
-- **Project Supervisor**: [Supervisor Name]
+- **Developer**: Minhazul Abedin and Sourav Garodia
+- **Project Supervisor**: Md. Ashraful Islam Talukder
 - **Institution**: Daffodil International University
-
-### Getting Help
-- 📧 **Email**: [project-email@daffodilvarsity.edu.bd]
-- 📱 **Phone**: [Contact Number]
-- 🌐 **Website**: [Project Website URL]
 
 ### Reporting Issues
 Found a bug or have a feature request? Please [create an issue](https://github.com/your-username/diu-lost-found-system/issues) on GitHub.
@@ -246,7 +243,5 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 <div align="center">
 
 **Made with ❤️ by MarsLab**
-
-*Helping reunite people with their belongings, one item at a time.*
 
 </div>
