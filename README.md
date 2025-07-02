@@ -2,8 +2,6 @@
 
 <img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="300" />
 
-<h1>📦 DIU Lost & Found System</h1>
-
 <p>
   <em>A comprehensive Lost and Found management system for Daffodil International University</em>
 </p>
@@ -17,13 +15,6 @@
 <p>
   <strong>⚠️ Project Status: Early Development</strong><br>
   <em>This project is in its initial development phase. Features and documentation are actively being developed.</em>
-</p>
-
-<p>
-  <a href="##getting-started">🚀 Getting Started</a> • 
-  <a href="##features">📋 Features</a> • 
-  <a href="##roadmap">🛣️ Roadmap</a> • 
-  <a href="##contributing">🤝 Contributing</a>
 </p>
 
 </div>
