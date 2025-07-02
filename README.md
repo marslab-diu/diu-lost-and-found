@@ -1,5 +1,7 @@
 <div align="center">
 
+<br><br>
+
 <img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="300" />
 
 <br><br>
