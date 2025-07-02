@@ -1,20 +1,30 @@
-# 📦 DIU Lost & Found System
-
-> **⚠️ Project Status: Early Development**
-> 
-> This project is in its initial development phase. Features and documentation are actively being developed.
-
 <div align="center">
 
-<img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="200" />
+<img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="300" />
 
-![Version](https://img.shields.io/badge/version-0.0.1-red)
-![Status](https://img.shields.io/badge/status-early%20development-orange)
-![License](https://img.shields.io/badge/license-ISC-blue)
+<h1>📦 DIU Lost & Found System</h1>
 
-*A comprehensive Lost and Found management system for Daffodil International University*
+<p>
+  <em>A comprehensive Lost and Found management system for Daffodil International University</em>
+</p>
 
-[🚀 Getting Started](#getting-started) • [📋 Features](#features) • [🛣️ Roadmap](#roadmap) • [🤝 Contributing](#contributing)
+<p>
+  <img src="https://img.shields.io/badge/version-0.0.1-red" alt="Version" />
+  <img src="https://img.shields.io/badge/status-early%20development-orange" alt="Status" />
+  <img src="https://img.shields.io/badge/license-ISC-blue" alt="License" />
+</p>
+
+<p>
+  <strong>⚠️ Project Status: Early Development</strong><br>
+  <em>This project is in its initial development phase. Features and documentation are actively being developed.</em>
+</p>
+
+<p>
+  <a href="#getting-started">🚀 Getting Started</a> • 
+  <a href="#features">📋 Features</a> • 
+  <a href="#roadmap">🛣️ Roadmap</a> • 
+  <a href="#contributing">🤝 Contributing</a>
+</p>
 
 </div>
 
