@@ -2,7 +2,7 @@
 
 <img src="branding-assets/logos/logo.svg" alt="DIU Lost & Found System Logo" width="300" />
 
-<br>
+<br><br>
 
 <p>
   <em>A comprehensive Lost and Found management system for Daffodil International University</em>
@@ -11,7 +11,7 @@
 <p>
   <img src="https://img.shields.io/badge/version-0.0.1-red" alt="Version" />
   <img src="https://img.shields.io/badge/status-early%20development-orange" alt="Status" />
-  <img src="https://img.shields.io/badge/license-ISC-blue" alt="License" />
+  <img src="https://img.shields.io/badge/license-Proprietary-purple" alt="License" />
 </p>
 
 <p>
@@ -239,7 +239,18 @@ Found a bug or have a feature request? Please [create an issue](https://github.c
 
 ## 📄 License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a **Proprietary License**. All rights reserved.
+
+### License Terms
+- **No Redistribution**: This software may not be copied, distributed, or shared without explicit written permission from the copyright holder.
+- **No Modification**: Creating derivative works, modifications, or adaptations is strictly prohibited.
+- **Restricted Use**: Usage is limited to authorized personnel of Daffodil International University for the intended purpose only.
+- **No Reverse Engineering**: Reverse engineering, decompiling, or disassembling is not permitted.
+- **Single Institution Use**: This software is licensed exclusively for use within Daffodil International University.
+
+For licensing inquiries or permissions, please contact the project team.
+
+Copyright © 2025 MarsLab. All rights reserved.
 
 ---
 
