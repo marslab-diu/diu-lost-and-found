@@ -6,9 +6,8 @@ import Navbar from '../components/User/Navbar';
 const UserLayout = () => {
     return (
         <div>
-            This is the User Layout
             <Navbar></Navbar>
-            <div className='min-h-[calc(100vh-76px)] flex flex-col justify-between'>
+            <div className='min-h-[calc(100vh-172px)] flex flex-col justify-between'>
                 <Outlet></Outlet>
             </div>
             <Footer></Footer>
