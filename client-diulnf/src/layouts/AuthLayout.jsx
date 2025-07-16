@@ -5,8 +5,7 @@ import { Outlet } from 'react-router';
 const AuthLayout = () => {
     return (
         <div>
-            This is the Auth Layout
-            <div className='min-h-[calc(100vh-76px)] flex flex-col justify-between'>
+            <div className='min-h-[calc(100vh-52px)] mx-auto w-11/12'>
                 <Outlet></Outlet>
             </div>
             <Footer></Footer>
