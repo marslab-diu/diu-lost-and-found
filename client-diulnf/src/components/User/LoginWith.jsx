@@ -12,12 +12,23 @@ const LoginWith = () => {
         signInWithGoogle()
             .then(result => {
                 const loggedUser = result.user;
-
-
-
-
-
-
+                
+                // Check if email ends with .diu.edu.bd
+                if (!/^[\w.-]+@[\w.-]*diu\.edu\.bd$/i.test(loggedUser.email)) {
+                    toast.error("Please use your DIU email account (.diu.edu.bd)");
+                    
+                    deleteAccount()
+                        .then(() => {
+                            return logOutUser();
+                        })
+                        .catch(error => {
+                            console.error("Error during logout/delete:", error);
+                            toast.error("Failed to log out or delete account. Please try again.");
+                        });
+                    
+                    return;
+                }
+                
                 toast.success(`Welcome ${loggedUser.displayName}`);
             })
             .catch(error => {
@@ -26,8 +37,7 @@ const LoginWith = () => {
             });
     };
 
-
-
+    console.log("User in LoginWith:", user);
 
     return (
         <div>
