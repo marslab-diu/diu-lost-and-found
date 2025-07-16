@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 const Navbar = () => {
 
-    const { user , loading, logOutUser } = useContext(AuthContext);
+    const { user, loading, logOutUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -36,6 +36,11 @@ const Navbar = () => {
                 <NavLink to="/user/report-found" className='font-medium hover:text-primary'>Report Found</NavLink>
                 <NavLink to="/user/recovered-items" className='font-medium hover:text-primary'>Recovered Items</NavLink>
                  
+            
+            {loading ? 
+                <div className="loading loading-ring  loading-lg"></div>
+            : (
+
                 <div className="flex items-center gap-2">
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="avatar">
@@ -69,6 +74,8 @@ const Navbar = () => {
                             </ul>
                         </div>
                     </div>
+            )}
+                
             </div>
 
         </div>
