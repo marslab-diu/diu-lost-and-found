@@ -1,17 +1,20 @@
 import React, { useContext } from 'react';
 import icon from '../../assets/icon.svg';
 import { AuthContext } from '../../contexts/AuthProvider';
-import { NavLink } from 'react-router';
-import { Toaster, toast } from 'sonner';
+import { NavLink, useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 const Navbar = () => {
 
     const { user , loading, logOutUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         logOutUser()
             .then(() => {
                 toast.success("Logged out successfully");
+                navigate('/');
+
                 // alert('Logged out successfully');
             })
             .catch((error) => {
@@ -68,9 +71,6 @@ const Navbar = () => {
                     </div>
             </div>
 
-
-
-            <Toaster position="top-center" richColors /> 
         </div>
     );
 };

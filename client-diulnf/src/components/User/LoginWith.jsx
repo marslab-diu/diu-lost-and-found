@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { useNavigate } from 'react-router';
 
@@ -49,7 +49,6 @@ const LoginWith = () => {
                 <FcGoogle size={20}/>
                 Sign in with DIU Email Account
             </button>
-            <Toaster position="top-center" richColors />
         </div>
     );
 };

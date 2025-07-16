@@ -44,3 +44,8 @@
   --depth: 1;
   --noise: 1;
 }
+
+
+a.active {
+ @apply border-b-3 border-primary;
+}
