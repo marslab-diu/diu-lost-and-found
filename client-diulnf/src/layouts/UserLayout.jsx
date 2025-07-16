@@ -8,7 +8,9 @@ const UserLayout = () => {
         <div>
             This is the User Layout
             <Navbar></Navbar>
-            <Outlet></Outlet>
+            <div className='min-h-[calc(100vh-76px)] flex flex-col justify-between'>
+                <Outlet></Outlet>
+            </div>
             <Footer></Footer>
         </div>
     );
