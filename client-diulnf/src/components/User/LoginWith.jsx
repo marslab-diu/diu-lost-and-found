@@ -2,9 +2,12 @@ import React, { useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { Toaster, toast } from 'sonner';
 import { AuthContext } from '../../contexts/AuthProvider';
+import { useNavigate } from 'react-router';
 
 
 const LoginWith = () => {
+
+    const navigate = useNavigate();
 
     const { user, loading, signInWithGoogle, logOutUser, deleteAccount } = useContext(AuthContext);
 
@@ -28,8 +31,9 @@ const LoginWith = () => {
                     
                     return;
                 }
-                
+
                 toast.success(`Welcome ${loggedUser.displayName}`);
+                navigate('/user/search', { replace: true });
             })
             .catch(error => {
                 console.error("Login error:", error);
