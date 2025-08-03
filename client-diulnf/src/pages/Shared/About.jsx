@@ -4,105 +4,105 @@ const About = () => {
     const contactData = [
         {
             designation: "Director",
-            name: "Major(Retd.) Md. Shajjal Hossain PSC, ndc(P)",
-            email: "director.ssms@daffodilvarsity.edu.bd",
-            phone: "+8801754439797",
-            ip: "65465"
+            name: "Major(Retd.)Md. Shah Alam,PSC, MPhill",
+            email: "director.ssm@daffodilvarsity.edu.bd",
+            phone: "++8801713493171",
+            ip: "65455"
         },
         {
             designation: "Security in-Charge",
-            name: "S M Forkhad Hossain",
-            email: "security.pscd@daffodilvarsity.edu.bd",
-            phone: "+8801817430439",
+            name: "S M Tariqul Islam",
+            email: "security@daffodilvarsity.edu.bd",
+            phone: "+8801847140049",
             ip: "65462"
         },
         {
             designation: "Assistant Safety and Security Officer",
-            name: "Md. Rouhein Mahmud",
+            name: "Md. Nadim Mahmud",
             email: "security.office@daffodilvarsity.edu.bd",
-            phone: "+8801847336481",
+            phone: "+8801847334911",
             ip: "65463"
         },
         {
             designation: "Assistant Safety and Security Officer",
-            name: "Mr. Rokhel Uddin",
+            name: "Mr. Rahat Uddin",
             email: "security.office@daffodilvarsity.edu.bd",
-            phone: "+8801887864566",
+            phone: "+8801897644948",
             ip: "65463"
         },
         {
             designation: "CCTV Operator",
-            name: "Md. Monhidul Alam",
-            email: "security.office@daffodilvarsity.edu.bd",
-            phone: "+8801887036844",
+            name: "MD. Mahbub Alam",
+            email: "security.office2@daffodilvarsity.edu.bd",
+            phone: "+8801847334914",
             ip: "65466"
         },
         {
             designation: "CCTV Operator",
-            name: "Md. Mostafol Ahmed",
+            name: "Md. Mostofa Ahmed",
             email: "cctv4@daffodilvarsity.edu.bd",
-            phone: "+8801847336844",
+            phone: "+8801847334914",
             ip: "65466"
         },
         {
             designation: "CCTV Operator",
             name: "Md. Arifuzzaman",
-            email: "cctv3@daffodilvarsity.edu.bd",
-            phone: "+8801847336844",
+            email: "cctv5@daffodilvarsity.edu.bdd",
+            phone: "+8801847334914",
             ip: "65466"
         },
         {
             designation: "CCTV Operator",
             name: "Mr. Abu Naser",
-            email: "cctv@daffodilvarsity.edu.bd",
-            phone: "+8801797736844",
+            email: "cctv1@daffodilvarsity.edu.bd",
+            phone: "+8801797762844",
             ip: "65466"
         },
         {
             designation: "CCTV Operator",
             name: "Mr. Ali Azam",
             email: "-",
-            phone: "+8801846036476",
+            phone: "+8801840804579", 
             ip: "-"
         },
         {
             designation: "CCTV Operator",
-            name: "Mr. Tanvim Khan Nasib",
+            name: "Mr. Tanjim Khan Nokib",
             email: "-",
-            phone: "+8801791485254",
+            phone: "+8801731418206",
             ip: "-"
         },
         {
             designation: "Security Supervisor",
             name: "Md. Habibur Rahman",
             email: "-",
-            phone: "+8801774884789",
+            phone: "+8801776591769",
             ip: "-"
         },
         {
             designation: "Security Supervisor",
-            name: "Md. Sharajulan",
+            name: "Md. Shahjahan",
             email: "-",
-            phone: "+8801784881780",
+            phone: "+8801718883780",
             ip: "-"
         },
         {
             designation: "Security Supervisor",
-            name: "Md. Saidur Islam",
+            name: "Md. Rafiqul Islam",
             email: "-",
-            phone: "+8801746366284",
+            phone: "+8801746284109",
             ip: "-"
         },
         {
             designation: "Security Supervisor",
-            name: "Md. Shohel Alom",
+            name: "Md. Shafiul Alom",
             email: "-",
-            phone: "+8801725606940",
+            phone: "+8801726906969",
             ip: "-"
         },
         {
             designation: "Security Supervisor",
-            name: "Sher Khadem Chowdro",
+            name: "Sree Bhoben Chandra",
             email: "-",
             phone: "+8801304426034",
             ip: "-"
@@ -190,7 +190,7 @@ const About = () => {
                             allowFullScreen=""
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                            title="DIU Birulia Location"
+                            title="DIU Location"
                         ></iframe>
                     </div>
                 </div>
