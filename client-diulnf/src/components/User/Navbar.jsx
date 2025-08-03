@@ -79,6 +79,14 @@ const Navbar = () => {
               {user?.displayName || "User"}
             </li>
             <li>
+              <NavLink
+              to="/user/profile"
+              className="btn btn-ghost btn-sm w-full"
+              >
+              Profile
+              </NavLink>
+            </li>
+            <li>
               <button
               onClick={handleLogout}
               className="btn btn-error btn-sm w-full"
