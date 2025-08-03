@@ -102,7 +102,7 @@ const About = () => {
         },
         {
             designation: "Security Supervisor",
-            name: "Sher Khadem Chowdro",
+            name: "Sree Bhoben Chandra",
             email: "-",
             phone: "+8801304426034",
             ip: "-"
