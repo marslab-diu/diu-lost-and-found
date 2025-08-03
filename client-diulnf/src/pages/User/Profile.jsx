@@ -174,20 +174,66 @@ const Profile = () => {
                     </div>
 
                     <div>
-                        <input
-                            type="text"
+                        <select
                             {...register('department', { 
-                                required: 'Department is required',
-                                minLength: {
-                                    value: 3,
-                                    message: 'Department must be at least 3 characters'
-                                }
+                                required: 'Department is required'
                             })}
-                            placeholder="Department"
                             className={`w-full px-4 py-3 border rounded-lg ${
                                 errors.department ? 'border-red-500' : 'border-gray-300'
                             }`}
-                        />
+                        >
+                            <option value="" disabled>Select Department</option>
+                            
+                            {/* Faculty of Science and Information Technology (FSIT) */}
+                            <optgroup label="Faculty of Science and Information Technology (FSIT)">
+                                <option value="Department of Computer Science & Engineering">Department of Computer Science & Engineering</option>
+                                <option value="Department of Computing & Information System (CIS)">Department of Computing & Information System (CIS)</option>
+                                <option value="Department of Software Engineering">Department of Software Engineering</option>
+                                <option value="Department of Environmental Science and Disaster Management">Department of Environmental Science and Disaster Management</option>
+                                <option value="Department of Multimedia & Creative Technology (MCT)">Department of Multimedia & Creative Technology (MCT)</option>
+                                <option value="Department of Information Technology and Management">Department of Information Technology and Management</option>
+                                <option value="Department of Physical Education & Sports Science (PESS)">Department of Physical Education & Sports Science (PESS)</option>
+                            </optgroup>
+                            
+                            {/* Faculty of Business and Entrepreneurship (FBE) */}
+                            <optgroup label="Faculty of Business and Entrepreneurship (FBE)">
+                                <option value="Department of Business Administration">Department of Business Administration</option>
+                                <option value="Department of Management">Department of Management</option>
+                                <option value="Department of Real Estate">Department of Real Estate</option>
+                                <option value="Department of Tourism & Hospitality Management">Department of Tourism & Hospitality Management</option>
+                                <option value="Department of Innovation & Entrepreneurship">Department of Innovation & Entrepreneurship</option>
+                                <option value="Department of Finance and Banking">Department of Finance and Banking</option>
+                                <option value="Department of Accounting">Department of Accounting</option>
+                                <option value="Department of Marketing">Department of Marketing</option>
+                            </optgroup>
+                            
+                            {/* Faculty of Engineering (FE) */}
+                            <optgroup label="Faculty of Engineering (FE)">
+                                <option value="Department of Information and Communication Engineering">Department of Information and Communication Engineering</option>
+                                <option value="Department of Textile Engineering">Department of Textile Engineering</option>
+                                <option value="Department of Electrical & Electronic Engineering">Department of Electrical & Electronic Engineering</option>
+                                <option value="Department of Architecture">Department of Architecture</option>
+                                <option value="Department of Civil Engineering">Department of Civil Engineering</option>
+                            </optgroup>
+                            
+                            {/* Faculty of Health and Life Sciences (FHLS) */}
+                            <optgroup label="Faculty of Health and Life Sciences (FHLS)">
+                                <option value="Department of Pharmacy">Department of Pharmacy</option>
+                                <option value="Department of Public Health">Department of Public Health</option>
+                                <option value="Department of Nutrition & Food Engineering">Department of Nutrition & Food Engineering</option>
+                                <option value="Department of Agricultural Science (AGS)">Department of Agricultural Science (AGS)</option>
+                                <option value="Department of Genetic Engineering and Biotechnology">Department of Genetic Engineering and Biotechnology</option>
+                            </optgroup>
+                            
+                            {/* Faculty of Humanities and Social Sciences (FHSS) */}
+                            <optgroup label="Faculty of Humanities and Social Sciences (FHSS)">
+                                <option value="Department of English">Department of English</option>
+                                <option value="Department of Law">Department of Law</option>
+                                <option value="Department of Journalism & Mass Communication">Department of Journalism & Mass Communication</option>
+                                <option value="Department of Development Studies">Department of Development Studies</option>
+                                <option value="Department of Information Science and Library Management">Department of Information Science and Library Management</option>
+                            </optgroup>
+                        </select>
                         {errors.department && (
                             <p className="text-red-500 text-sm mt-1">{errors.department.message}</p>
                         )}
