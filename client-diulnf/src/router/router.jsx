@@ -13,6 +13,7 @@ import Feedback from "../pages/Shared/Feedback";
 import Terms from "../pages/Shared/Terms";
 import Privacy from "../pages/Shared/Privacy";
 import AuthLayout from "../layouts/AuthLayout";
+import Forbidden from "../pages/Shared/Forbidden";
 
 
 export const router = createBrowserRouter([
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
             {
                 path: "privacy",
                 element: <Privacy></Privacy>
+            },
+            {
+                path: "forbidden",
+                element: <Forbidden></Forbidden>
             }   
 
         ]
