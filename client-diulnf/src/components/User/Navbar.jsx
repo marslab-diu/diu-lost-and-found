@@ -24,61 +24,73 @@ const Navbar = () => {
     };
 
     return (
-        <div className='w-11/12 mx-auto px-5 py-10 flex justify-between items-center'>
-            <div className='flex-1'>
-                <NavLink to="/user/search">
-                    <img src={icon} alt="Logo" className='w-10 h-10' />
-                </NavLink>
-            </div>
-
-            <div className='flex items-center gap-8'>
-                <NavLink to={"/user/report-lost"} className='font-medium hover:text-primary'>Report Lost</NavLink>
-                <NavLink to="/user/report-found" className='font-medium hover:text-primary'>Report Found</NavLink>
-                <NavLink to="/user/recovered-items" className='font-medium hover:text-primary'>Recovered Items</NavLink>
-                 
-            
-            {loading ? 
-                <div className="loading loading-ring  loading-lg"></div>
-            : (
-
-                <div className="flex items-center gap-2">
-                        <div className="dropdown dropdown-end">
-                            <div tabIndex={0} role="button" className="avatar">
-                                <div className="w-10 h-10 rounded-full cursor-pointer">
-                                    <img
-                                        className="select-none"
-                                        src={user?.photoURL || "/default-avatar.jpg"}
-                                        alt="profile"
-                                        onError={(e) => {
-                                            e.currentTarget.onerror = null;
-                                            e.currentTarget.src = "/default-avatar.jpg";
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <ul
-                                tabIndex={0}
-                                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 mt-2"
-                            >
-                                <li className="mb-2 text-center font-semibold select-none">
-                                    {user?.displayName || "User"}
-                                </li>
-                                <li>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="btn btn-error btn-sm w-full"
-                                    >
-                                        Logout
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-            )}
-                
-            </div>
-
+      <div className="w-11/12 mx-auto px-5 py-10 flex justify-between items-center">
+        <div className="flex-1">
+          <NavLink to="/user/search">
+            <img src={icon} alt="Logo" className="w-10 h-10" />
+          </NavLink>
         </div>
+
+        <div className="flex items-center gap-8">
+          <NavLink
+            to={"/user/report-lost"}
+            className="font-medium hover:text-primary"
+          >
+            Report Lost
+          </NavLink>
+          <NavLink
+            to="/user/report-found"
+            className="font-medium hover:text-primary"
+          >
+            Report Found
+          </NavLink>
+          <NavLink
+            to="/user/recovered-items"
+            className="font-medium hover:text-primary"
+          >
+            Recovered Items
+          </NavLink>
+
+          {loading ? (
+            <div className="loading loading-ring  loading-lg"></div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="avatar">
+                  <div className="w-10 h-10 rounded-full cursor-pointer">
+                    <img
+                      referrerPolicy="no-referrer"
+                      className="select-none"
+                      src={user?.photoURL || "/default-avatar.jpg"}
+                      alt="profile"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/default-avatar.jpg";
+                      }}
+                    />
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 mt-2"
+                >
+                  <li className="mb-2 text-center font-semibold select-none">
+                    {user?.displayName || "User"}
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="btn btn-error btn-sm w-full"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     );
 };
 
