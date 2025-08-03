@@ -175,7 +175,7 @@ const About = () => {
                         <div className="space-y-1 text-gray-700">
                             <p className="font-semibold">Safety and Security Management Office</p>
                             <p>Ground Floor</p>
-                            <p>Knowledge Tower (A502)</p>
+                            <p>Knowledge Tower (AB4)</p>
                             <p>Daffodil International University</p>
                             <p>Birulia, Savar</p>
                             <p>Dhaka</p>
