@@ -134,32 +134,32 @@ const About = () => {
             <div className="max-w-[1920px] mx-auto px-6 py-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-5">Contact</h2>
                 <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border border-gray-300">
+                    <table className="w-full border-collapse">
                         <thead>
-                            <tr className="bg-gray-100">
-                                <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800">Designation</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800">Name</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800">Email</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800">Phone</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800">IP</th>
+                            <tr className="bg-gray-50 border-t border-b border-gray-200">
+                                <th className="px-5 py-3 text-left font-semibold text-gray-800">Designation</th>
+                                <th className="px-5 py-3 text-left font-semibold text-gray-800">Name</th>
+                                <th className="px-5 py-3 text-left font-semibold text-gray-800">Email</th>
+                                <th className="px-5 py-3 text-left font-semibold text-gray-800">Phone</th>
+                                <th className="px-5 py-3 text-left font-semibold text-gray-800">IP</th>
                             </tr>
                         </thead>
                         <tbody>
                             {contactData.map((contact, index) => (
-                                <tr key={index}>
-                                    <td className="border border-gray-300 px-4 py-2 text-gray-800">{contact.designation}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-gray-800">{contact.name}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-blue-600">
+                                <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
+                                    <td className="px-5 py-3 text-gray-800">{contact.designation}</td>
+                                    <td className="px-5 py-3 text-gray-800">{contact.name}</td>
+                                    <td className="px-5 py-3">
                                         {contact.email !== "-" ? (
-                                            <a href={`mailto:${contact.email}`} className="hover:underline">
+                                            <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
                                                 {contact.email}
                                             </a>
                                         ) : (
                                             "-"
                                         )}
                                     </td>
-                                    <td className="border border-gray-300 px-4 py-2 text-gray-800">{contact.phone}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-gray-800">{contact.ip}</td>
+                                    <td className="px-5 py-3 text-gray-800">{contact.phone}</td>
+                                    <td className="px-5 py-3 text-gray-800">{contact.ip || "-"}</td>
                                 </tr>
                             ))}
                         </tbody>
