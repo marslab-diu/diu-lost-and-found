@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../contexts/AuthProvider';
 import useAxiosSecure from './useAxiosSecure';
+import { toast } from 'sonner';
 
 const useProfileCheck = () => {
     const { user } = useContext(AuthContext);
@@ -30,6 +31,7 @@ const useProfileCheck = () => {
             // console.log('Profile check response:', response.data);
             
             if (!exists || !isComplete) {
+                toast.error('Please update your profile.');
                 navigate('/user/profile', { replace: true });
             } else {
                 navigate('/user/search', { replace: true });
