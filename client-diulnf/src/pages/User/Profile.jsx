@@ -59,7 +59,7 @@ const Profile = () => {
         }
     });
 
-    // Populate form with existing data
+    
     useEffect(() => {
         if (userProfile) {
             // Reset form with existing profile data
@@ -104,7 +104,7 @@ const Profile = () => {
 
     return (
         <div className="py-8">
-            <div className="max-w-lg mx-auto bg-white rounded-lg p-6">
+            <div className="max-w-2xl mx-auto bg-white rounded-lg p-6">
                 {/* Profile Picture */}
                 <div className="text-center mb-8">
                     <div className="w-24 h-24 mx-auto rounded-full overflow-hidden bg-gray-200 mb-4">
