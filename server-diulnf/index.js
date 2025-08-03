@@ -20,8 +20,8 @@ admin.initializeApp({
 const verifyFirebaseToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
-//   console.log("Authorization Header:", authHeader);
-//   console.log("Token:", token);
+  //   console.log("Authorization Header:", authHeader);
+  //   console.log("Token:", token);
   if (!token) {
     return res
       .status(401)
@@ -88,6 +88,75 @@ async function run() {
           (field) => !user[field] || user[field].toString().trim() === ""
         ),
       });
+    });
+
+    // get user profile by email
+    app.get("/user/profile", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.tokenEmail;
+        const user = await usersCollection.findOne({ email: email });
+
+        if (user) {
+          res.send(user);
+        } else {
+          res.status(404).send({
+            error: true,
+            message: "User profile not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch profile",
+        });
+      }
+    });
+
+    // create or update user profile
+    app.post("/user/profile", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.tokenEmail;
+        const { name, universityId, phone, department } = req.body;
+
+        // Validate required fields
+        if (!name || !universityId || !phone || !department) {
+          return res.status(400).send({
+            error: true,
+            message: "All fields are required",
+          });
+        }
+
+        const userProfile = {
+          email,
+          name,
+          universityId,
+          phone,
+          department,
+          role: "user",
+          updatedAt: new Date(),
+          createdAt: new Date(),
+        };
+
+        // Upsert user profile
+        const result = await usersCollection.replaceOne(
+          { email: email },
+          userProfile,
+          { upsert: true }
+        );
+
+        res.send({
+          success: true,
+          message: "Profile updated successfully",
+          result,
+        });
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to update profile",
+        });
+      }
     });
 
     app.get("/test", async (req, res) => {
