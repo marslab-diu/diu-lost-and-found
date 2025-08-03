@@ -1,11 +1,13 @@
 import React from 'react';
 import Footer from '../components/Shared/Footer';
 import { Outlet } from 'react-router';
+import Navbar from '../components/User/Navbar';
 
 const AuthLayout = () => {
     return (
         <div>
-            <div className='min-h-[calc(100vh-52px)] mx-auto w-11/12'>
+            <Navbar></Navbar>
+            <div className='min-h-[calc(100vh-172px)] mx-auto w-11/12'>
                 <Outlet></Outlet>
             </div>
             <Footer></Footer>
