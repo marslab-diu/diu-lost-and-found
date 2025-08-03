@@ -31,6 +31,10 @@ async function run() {
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
+        const usersCollection = client.db("diu-lnf").collection("users"); 
+
+
+
         app.get("/test", async (req, res) => {
             res.send("Test route is working");
         });
