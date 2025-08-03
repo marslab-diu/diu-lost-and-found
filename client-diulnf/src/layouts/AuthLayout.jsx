@@ -7,7 +7,7 @@ import PrivateRoute from '../routes/PrivateRoute';
 const AuthLayout = () => {
     return (
         <div>
-            <PrivateRoute><Navbar></Navbar></PrivateRoute>
+            <Navbar></Navbar>            
             <div className='min-h-[calc(100vh-172px)] mx-auto w-11/12'>
                 <Outlet></Outlet>
             </div>

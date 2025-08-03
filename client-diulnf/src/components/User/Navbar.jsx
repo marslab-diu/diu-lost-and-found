@@ -38,12 +38,14 @@ const Navbar = () => {
         >
         Report Lost
         </NavLink>
+
         <NavLink
         to="/user/report-found"
         className="font-medium hover:text-primary"
         >
         Report Found
         </NavLink>
+        
         <NavLink
         to="/user/recovered-items"
         className="font-medium hover:text-primary"

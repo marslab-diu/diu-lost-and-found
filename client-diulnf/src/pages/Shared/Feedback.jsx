@@ -34,7 +34,7 @@ const Feedback = () => {
     };
 
     return (
-        <div className="w-full flex justify-center items-center min-h-[calc(100vh-140px)]">
+        <div className="w-full flex justify-center items-center min-h-[calc(100vh-172px)]">
             <div className="max-w-[1920px] w-full px-6 py-6">
                 <div className="max-w-2xl mx-auto">
                     {submitStatus === 'success' && (
