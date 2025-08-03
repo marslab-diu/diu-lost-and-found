@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
+import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircleOutline } from "react-icons/io5";
 
 const AccordionItem = ({ title, children, isOpen, onClick }) => {
     return (
@@ -27,8 +27,7 @@ const Help = () => {
         'step2': false,
         'step3': false,
         'option1': true,
-        'option2': false,
-        'notes': false
+        'option2': false
     });
 
     // Toggle function for accordion items
@@ -125,17 +124,19 @@ const Help = () => {
                         </AccordionItem>
 
                         {/* Notes */}
-                        <AccordionItem 
-                            title="Notes" 
-                            isOpen={openItems.notes}
-                            onClick={() => toggleItem('notes')}
-                        >
-                            <ul className="list-disc pl-5 space-y-2">
-                                <li>Always describe the item clearly — this helps others find their items quickly.</li>
-                                <li>Reports with photos and accurate location/time info are more effective.</li>
-                                <li>Submitting false reports or trying to claim items that are not yours is a policy violation and may lead to disciplinary action.</li>
-                            </ul>
-                        </AccordionItem>
+                        <div className="border border-gray-200 rounded-md mb-4">
+                            <div className="flex justify-between items-center p-4 bg-white">
+                                <h3 className="font-semibold">Notes</h3>
+                                <IoInformationCircleOutline className="text-blue-500 text-xl" />
+                            </div>
+                            <div className="p-5 border-t border-gray-200 bg-white">
+                                <ul className="list-disc pl-5 space-y-2">
+                                    <li>Always describe the item clearly — this helps others find their items quickly.</li>
+                                    <li>Reports with photos and accurate location/time info are more effective.</li>
+                                    <li>Submitting false reports or trying to claim items that are not yours is a policy violation and may lead to disciplinary action.</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
