@@ -14,9 +14,12 @@ import Terms from "../pages/Shared/Terms";
 import Privacy from "../pages/Shared/Privacy";
 import AuthLayout from "../layouts/AuthLayout";
 import Forbidden from "../pages/Shared/Forbidden";
+import AdminLayout from "../layouts/AdminLayout";
+import AdminLogin from "../pages/Admin/AdminLogin";
 
 
 export const router = createBrowserRouter([
+    // public 
     {
         path: "/",
         Component: AuthLayout,
@@ -56,6 +59,7 @@ export const router = createBrowserRouter([
 
         ]
     },
+    // user
     {
         path: "/user",
         Component: UserLayout, 
@@ -82,4 +86,16 @@ export const router = createBrowserRouter([
             },
         ]
     }, 
+    // admin
+    {
+        path: "/admin",
+        element: <AdminLayout></AdminLayout>,
+        children: [
+            {
+                path: "login",
+                element: <AdminLogin></AdminLogin>
+            }
+        ]
+
+    }
 ]);
