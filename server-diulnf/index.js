@@ -20,8 +20,8 @@ admin.initializeApp({
 const verifyFirebaseToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("Authorization Header:", authHeader);
-  // console.log("Token:", token);
+//   console.log("Authorization Header:", authHeader);
+//   console.log("Token:", token);
   if (!token) {
     return res
       .status(401)
@@ -37,9 +37,6 @@ const verifyFirebaseToken = async (req, res, next) => {
     return res.status(403).send({ error: true, message: "Forbidden access" });
   }
 };
-
-
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.1gc3l46.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -60,6 +57,38 @@ async function run() {
     );
 
     const usersCollection = client.db("diu-lnf").collection("users");
+
+    // user api's
+
+    // check if user profile complete
+    app.get("/user/profile-status", verifyFirebaseToken, async (req, res) => {
+      const email = req.tokenEmail;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+
+      if (!user) {
+        return res.send({
+          exists: false,
+          isComplete: false,
+          message: "User not found",
+        });
+      }
+
+      // Check if all required fields are present nd not empty
+      const requiredFields = ["name", "universityId", "phone", "department"];
+      const isComplete = requiredFields.every(
+        (field) => user[field] && user[field].toString().trim() !== ""
+      );
+
+      res.send({
+        exists: true,
+        isComplete: isComplete,
+        user: user,
+        missingFields: requiredFields.filter(
+          (field) => !user[field] || user[field].toString().trim() === ""
+        ),
+      });
+    });
 
     app.get("/test", async (req, res) => {
       res.send("Test route is working");

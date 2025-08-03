@@ -9,34 +9,43 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-
     const { user, logOutUser } = useAuth();
     const navigate = useNavigate();
 
     axiosSecure.interceptors.request.use(config => {
-        config.headers.Authorization = `Bearer ${user.accessToken}`
+        if (user?.accessToken) {
+            config.headers.Authorization = `Bearer ${user.accessToken}`;
+            // console.log("Bearer Token being sent:", config.headers.Authorization);
+            
+        } else {
+            console.log("No user or accessToken found");
+        }
         return config;
     }, error => {
+        console.error("Request interceptor error:", error);
         return Promise.reject(error);
-    })
+    });
 
     axiosSecure.interceptors.response.use(res => {
+        // console.log("Response received:", res.status, res.data);
         return res;
     }, error => {
-        const status = error.status;
+        console.error("Response error:", error.response);
+        const status = error.response?.status;
+        
         if (status === 403) {
             navigate('/forbidden');
-        }
-        else if (status === 401) {
+        } else if (status === 401) {
+            console.log("401 error - logging out user");
             logOutUser()
                 .then(() => {
-                    navigate('/login')
+                    navigate('/')
                 })
-                .catch(() => { })
+                .catch(() => {});
         }
 
         return Promise.reject(error);
-    })
+    });
 
     return axiosSecure;
 };
