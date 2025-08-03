@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -11,6 +11,67 @@ const Profile = () => {
     const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [isDepartmentModalOpen, setIsDepartmentModalOpen] = useState(false);
+    const [selectedDepartment, setSelectedDepartment] = useState('');
+
+    // Department data organized by faculty
+    const departmentData = [
+        {
+            faculty: "Faculty of Science and Information Technology (FSIT)",
+            departments: [
+                "Department of Computer Science & Engineering",
+                "Department of Computing & Information System (CIS)",
+                "Department of Software Engineering",
+                "Department of Environmental Science and Disaster Management",
+                "Department of Multimedia & Creative Technology (MCT)",
+                "Department of Information Technology and Management",
+                "Department of Physical Education & Sports Science (PESS)"
+            ]
+        },
+        {
+            faculty: "Faculty of Business and Entrepreneurship (FBE)",
+            departments: [
+                "Department of Business Administration",
+                "Department of Management",
+                "Department of Real Estate",
+                "Department of Tourism & Hospitality Management",
+                "Department of Innovation & Entrepreneurship",
+                "Department of Finance and Banking",
+                "Department of Accounting",
+                "Department of Marketing"
+            ]
+        },
+        {
+            faculty: "Faculty of Engineering (FE)",
+            departments: [
+                "Department of Information and Communication Engineering",
+                "Department of Textile Engineering",
+                "Department of Electrical & Electronic Engineering",
+                "Department of Architecture",
+                "Department of Civil Engineering"
+            ]
+        },
+        {
+            faculty: "Faculty of Health and Life Sciences (FHLS)",
+            departments: [
+                "Department of Pharmacy",
+                "Department of Public Health",
+                "Department of Nutrition & Food Engineering",
+                "Department of Agricultural Science (AGS)",
+                "Department of Genetic Engineering and Biotechnology"
+            ]
+        },
+        {
+            faculty: "Faculty of Humanities and Social Sciences (FHSS)",
+            departments: [
+                "Department of English",
+                "Department of Law",
+                "Department of Journalism & Mass Communication",
+                "Department of Development Studies",
+                "Department of Information Science and Library Management"
+            ]
+        }
+    ];
 
     // React Hook form setup
     const {
@@ -69,6 +130,7 @@ const Profile = () => {
                 phone: userProfile.phone || '',
                 department: userProfile.department || ''
             });
+            setSelectedDepartment(userProfile.department || '');
         } else if (user && !isLoadingProfile) {
             // Prefill with Firebase user data if no profile exists
             setValue('name', user.displayName || '');
@@ -77,6 +139,12 @@ const Profile = () => {
 
     const onSubmit = (data) => {
         updateProfileMutation.mutate(data);
+    };
+
+    const handleDepartmentSelect = (department) => {
+        setSelectedDepartment(department);
+        setValue('department', department);
+        setIsDepartmentModalOpen(false); // Close modal immediately when a department is selected
     };
 
     const handleLogout = () => {
@@ -174,66 +242,27 @@ const Profile = () => {
                     </div>
 
                     <div>
-                        <select
+                        <button
+                            type="button"
+                            onClick={() => setIsDepartmentModalOpen(true)}
+                            className={`w-full px-4 py-3 border rounded-lg text-left flex justify-between items-center ${
+                                errors.department ? 'border-red-500' : 'border-gray-300'
+                            } ${selectedDepartment ? 'text-gray-900' : 'text-gray-500'}`}
+                        >
+                            <span>
+                                {selectedDepartment || 'Select Department'}
+                            </span>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <input
+                            type="hidden"
                             {...register('department', { 
                                 required: 'Department is required'
                             })}
-                            className={`w-full px-4 py-3 border rounded-lg ${
-                                errors.department ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                        >
-                            <option value="" disabled>Select Department</option>
-                            
-                            {/* Faculty of Science and Information Technology (FSIT) */}
-                            <optgroup label="Faculty of Science and Information Technology (FSIT)">
-                                <option value="Department of Computer Science & Engineering">Department of Computer Science & Engineering</option>
-                                <option value="Department of Computing & Information System (CIS)">Department of Computing & Information System (CIS)</option>
-                                <option value="Department of Software Engineering">Department of Software Engineering</option>
-                                <option value="Department of Environmental Science and Disaster Management">Department of Environmental Science and Disaster Management</option>
-                                <option value="Department of Multimedia & Creative Technology (MCT)">Department of Multimedia & Creative Technology (MCT)</option>
-                                <option value="Department of Information Technology and Management">Department of Information Technology and Management</option>
-                                <option value="Department of Physical Education & Sports Science (PESS)">Department of Physical Education & Sports Science (PESS)</option>
-                            </optgroup>
-                            
-                            {/* Faculty of Business and Entrepreneurship (FBE) */}
-                            <optgroup label="Faculty of Business and Entrepreneurship (FBE)">
-                                <option value="Department of Business Administration">Department of Business Administration</option>
-                                <option value="Department of Management">Department of Management</option>
-                                <option value="Department of Real Estate">Department of Real Estate</option>
-                                <option value="Department of Tourism & Hospitality Management">Department of Tourism & Hospitality Management</option>
-                                <option value="Department of Innovation & Entrepreneurship">Department of Innovation & Entrepreneurship</option>
-                                <option value="Department of Finance and Banking">Department of Finance and Banking</option>
-                                <option value="Department of Accounting">Department of Accounting</option>
-                                <option value="Department of Marketing">Department of Marketing</option>
-                            </optgroup>
-                            
-                            {/* Faculty of Engineering (FE) */}
-                            <optgroup label="Faculty of Engineering (FE)">
-                                <option value="Department of Information and Communication Engineering">Department of Information and Communication Engineering</option>
-                                <option value="Department of Textile Engineering">Department of Textile Engineering</option>
-                                <option value="Department of Electrical & Electronic Engineering">Department of Electrical & Electronic Engineering</option>
-                                <option value="Department of Architecture">Department of Architecture</option>
-                                <option value="Department of Civil Engineering">Department of Civil Engineering</option>
-                            </optgroup>
-                            
-                            {/* Faculty of Health and Life Sciences (FHLS) */}
-                            <optgroup label="Faculty of Health and Life Sciences (FHLS)">
-                                <option value="Department of Pharmacy">Department of Pharmacy</option>
-                                <option value="Department of Public Health">Department of Public Health</option>
-                                <option value="Department of Nutrition & Food Engineering">Department of Nutrition & Food Engineering</option>
-                                <option value="Department of Agricultural Science (AGS)">Department of Agricultural Science (AGS)</option>
-                                <option value="Department of Genetic Engineering and Biotechnology">Department of Genetic Engineering and Biotechnology</option>
-                            </optgroup>
-                            
-                            {/* Faculty of Humanities and Social Sciences (FHSS) */}
-                            <optgroup label="Faculty of Humanities and Social Sciences (FHSS)">
-                                <option value="Department of English">Department of English</option>
-                                <option value="Department of Law">Department of Law</option>
-                                <option value="Department of Journalism & Mass Communication">Department of Journalism & Mass Communication</option>
-                                <option value="Department of Development Studies">Department of Development Studies</option>
-                                <option value="Department of Information Science and Library Management">Department of Information Science and Library Management</option>
-                            </optgroup>
-                        </select>
+                            value={selectedDepartment}
+                        />
                         {errors.department && (
                             <p className="text-red-500 text-sm mt-1">{errors.department.message}</p>
                         )}
@@ -276,6 +305,56 @@ const Profile = () => {
                     Log Out
                 </button>
             </div>
+
+            {/* Department Selection Modal */}
+            {isDepartmentModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col shadow-md">
+                        {/* Modal Header */}
+                        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                            <h3 className="text-lg font-medium text-gray-800">Select Department</h3>
+                            <button
+                                onClick={() => setIsDepartmentModalOpen(false)}
+                                className="text-gray-400 hover:text-gray-600 p-1"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="space-y-6">
+                                {departmentData.map((faculty, facultyIndex) => (
+                                    <div key={facultyIndex} className="space-y-3">
+                                        <h4 className="font-medium text-primary text-lg border-b border-gray-200 pb-2">
+                                            {faculty.faculty}
+                                        </h4>
+                                        <div className="grid gap-2">
+                                            {faculty.departments.map((department, deptIndex) => (
+                                                <button
+                                                    key={deptIndex}
+                                                    onClick={() => handleDepartmentSelect(department)}
+                                                    className={`text-left p-3 rounded-lg border transition-all duration-200 hover:bg-primary hover:text-white ${
+                                                        selectedDepartment === department 
+                                                            ? 'border-primary bg-primary text-white' 
+                                                            : 'border-gray-200 hover:border-primary'
+                                                    }`}
+                                                >
+                                                    {department}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* No Footer */}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
