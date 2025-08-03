@@ -190,7 +190,7 @@ const About = () => {
                             allowFullScreen=""
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                            title="DIU Birulia Location"
+                            title="DIU Location"
                         ></iframe>
                     </div>
                 </div>
