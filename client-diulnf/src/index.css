@@ -49,3 +49,7 @@
 a.active {
  @apply border-b-3 border-primary;
 }
+
+.admin-nav > li > a.active {
+  @apply border-b-3 bg-base-300 border-none;
+}
