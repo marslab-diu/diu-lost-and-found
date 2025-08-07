@@ -350,6 +350,7 @@ async function run() {
         });
       }
     });
+<<<<<<< Updated upstream
 
       // submit a found item report
     app.post("/found-reports", verifyFirebaseToken, async (req, res) =>
@@ -432,6 +433,9 @@ async function run() {
       }
     });
 
+=======
+    
+>>>>>>> Stashed changes
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
