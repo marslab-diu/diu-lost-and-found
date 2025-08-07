@@ -3,6 +3,10 @@ import icon from '../../assets/icon.svg';
 import LoginWith from '../../components/User/LoginWith';
 
 const Home = () => {
+
+    
+
+
     return (
         <div className='min-h-[calc(100vh-52px)] flex flex-col items-center justify-center'>
             <img
