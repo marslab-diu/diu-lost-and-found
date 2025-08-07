@@ -351,6 +351,87 @@ async function run() {
       }
     });
 
+      // submit a found item report
+    app.post("/found-reports", verifyFirebaseToken, async (req, res) =>
+      {
+      try {
+        const email = req.tokenEmail;
+        const {
+          itemName,
+          color,
+          item_description,
+          found_date,
+          found_time,
+          found_location,
+          imageUrl,
+        } = req.body;
+
+        // Validate required fields
+        if (!itemName || !item_description || !found_date || !found_location) {
+          return res.status(400).send({
+            error: true,
+            message:
+              "Item name, description, found date, and location are required",
+          });
+        }
+
+        // Get user details
+        const user = await usersCollection.findOne({ email: email });
+
+        if (!user) {
+          return res.status(404).send({
+            error: true,
+            message: "User not found",
+          });
+        }
+
+        // Generate unique report ID using sequence counter
+        const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
+        const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
+
+        // Create found report object
+        const foundReport = {
+          reportId,
+          itemName: itemName.trim(),
+          description: item_description.trim(),
+          color: color ? color.trim() : null,
+          found_location: found_location.trim(),
+          found_date: new Date(found_date),
+          found_time: found_time || null,
+          imageUrl: imageUrl || null,
+          reportedBy: user._id,
+          status: "open",
+          statusUpdatedAt: new Date(),
+          createdAt: new Date(),
+        };
+
+        // console.log("Found report object to insert:", foundReport);
+
+        // Insert the report
+        const result = await foundItemsCollection.insertOne(foundReport);
+
+        if (result.insertedId) {
+          res.send({
+            success: true,
+            message: "Found item report submitted successfully",
+            reportId: reportId,
+          });
+        } else {
+          res.status(500).send({
+            error: true,
+            message: "Failed to submit report",
+          });
+        }
+      } catch (error) {
+        console.error("Error submitting found report:", error);
+        res.status(500).send({
+          error: true,
+          message: "Internal server error",
+          details: error.message,
+        });
+      }
+    });
+
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
