@@ -26,7 +26,7 @@ const AdminLayout = () => {
 
                         <div className="my-0 divider"></div>
                         
-                        <span className='text-lg'>Inputs & Reporting</span>
+                        <span className='text-md'>Inputs & Reporting</span>
                         <li><NavLink to="/admin/lost-reports" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsExclamationTriangle size={22} />
                             <span className='text-lg'>Lost Reports</span>
@@ -45,7 +45,7 @@ const AdminLayout = () => {
 
                         <div className="my-0 divider"></div>
                         
-                        <span className='text-lg'>Item Management</span>
+                        <span className='text-md'>Item Management</span>
                         <li><NavLink to="/admin/lost-reports" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsArchive size={22} />
                             <span className='text-lg'>Recovered Items</span>

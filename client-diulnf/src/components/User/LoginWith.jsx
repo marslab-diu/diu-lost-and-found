@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'sonner';
 import { AuthContext } from '../../contexts/AuthProvider';

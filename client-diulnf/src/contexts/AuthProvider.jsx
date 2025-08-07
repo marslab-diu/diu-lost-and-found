@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { deleteUser, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword, deleteUser, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { app } from '../firebase/firebase.config';
 
 
@@ -11,6 +11,22 @@ const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
+
+    // this is for admin only
+    const createUser = (email, password) => {
+        setLoading(true);
+        return createUserWithEmailAndPassword(auth, email, password);
+    }
+
+    const logInUser = (email, password) => {
+        setLoading(true);
+        return signInWithEmailAndPassword(auth, email, password);
+    };
+
+
+
+
 
     const signInWithGoogle = () => {
         setLoading(true);
@@ -25,7 +41,7 @@ const AuthProvider = ({ children }) => {
     const deleteAccount = () => {
         setLoading(true);
         return deleteUser(auth.currentUser);
-    }   
+    }
 
 
     useEffect(() => {
@@ -38,7 +54,7 @@ const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }
         , []);
-    
+
 
 
     const authData = {
@@ -48,7 +64,9 @@ const AuthProvider = ({ children }) => {
         loading,
         signInWithGoogle,
         logOutUser,
-        deleteAccount
+        deleteAccount,
+        createUser,
+        logInUser
     };
 
 

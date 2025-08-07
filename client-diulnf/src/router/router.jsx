@@ -18,6 +18,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import AdminLogin from "../pages/Admin/AdminLogin";
 import RootLayout from "../layouts/RootLayout";
 import UserLogin from "../pages/User/UserLogin";
+import Dashboard from "../pages/Admin/Dashboard";
 
 
 export const router = createBrowserRouter([
@@ -113,8 +114,8 @@ export const router = createBrowserRouter([
         element: <AdminLayout></AdminLayout>,
         children: [
             {
-                path: "login",
-                element: <AdminLogin></AdminLogin>
+                index: true,
+                element: <Dashboard></Dashboard>
             }
         ]
 
