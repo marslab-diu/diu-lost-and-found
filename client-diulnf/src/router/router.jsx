@@ -16,13 +16,15 @@ import AuthLayout from "../layouts/AuthLayout";
 import Forbidden from "../pages/Shared/Forbidden";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminLogin from "../pages/Admin/AdminLogin";
+import RootLayout from "../layouts/RootLayout";
+import UserLogin from "../pages/User/UserLogin";
 
 
 export const router = createBrowserRouter([
     // public 
     {
         path: "/",
-        Component: AuthLayout,
+        Component: RootLayout,
         children: [
             {
                 index: true,
@@ -42,7 +44,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "feedback",
-                element: <Feedback></Feedback> 
+                element: <Feedback></Feedback>
             },
             {
                 path: "terms",
@@ -55,16 +57,35 @@ export const router = createBrowserRouter([
             {
                 path: "forbidden",
                 element: <Forbidden></Forbidden>
-            }   
+            }
 
         ]
     },
+    //auth
+    {
+        path: "/auth",
+        Component: AuthLayout,
+        children: [
+            {
+                path: "login",
+                element: <UserLogin></UserLogin>
+            },
+            {
+                path: "login/admin",
+                element: <AdminLogin></AdminLogin>
+            }
+        ]
+
+    },
+
+
+
     // user
     {
         path: "/user",
-        Component: UserLayout, 
+        Component: UserLayout,
         children: [
-            { 
+            {
                 path: "search",
                 element: <Search></Search>
             },
@@ -74,7 +95,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "report-found",
-                element: <ReportFound></ReportFound> 
+                element: <ReportFound></ReportFound>
             },
             {
                 path: "recovered-items",
@@ -85,7 +106,7 @@ export const router = createBrowserRouter([
                 element: <Profile></Profile>
             },
         ]
-    }, 
+    },
     // admin
     {
         path: "/admin",

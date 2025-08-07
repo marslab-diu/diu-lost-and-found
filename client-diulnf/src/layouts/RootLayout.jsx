@@ -4,7 +4,7 @@ import { Outlet } from 'react-router';
 import Navbar from '../components/User/Navbar';
 import PrivateRoute from '../routes/PrivateRoute';
 
-const AuthLayout = () => {
+const RootLayout = () => {
     return (
         <div>
             <PrivateRoute><Navbar></Navbar></PrivateRoute>           
@@ -16,4 +16,4 @@ const AuthLayout = () => {
     );
 };
 
-export default AuthLayout;
+export default RootLayout;

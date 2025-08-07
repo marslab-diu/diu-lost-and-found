@@ -3,16 +3,16 @@ import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'sonner';
 import { AuthContext } from '../../contexts/AuthProvider';
 import useProfileCheck from '../../hooks/useProfileCheck';
-import { useNavigate } from 'react-router';
+import useAuth from '../../hooks/useAuth';
+
 
 
 const LoginWith = () => {
 
 
-    const { user, loading, signInWithGoogle, logOutUser, deleteAccount } = useContext(AuthContext);
+    const { user, loading, signInWithGoogle, logOutUser, deleteAccount } = useAuth();
     const { checkUserProfile, isChecking } = useProfileCheck();
 
-    const navigate = useNavigate();
 
 
     const handleLogin = () => {
@@ -50,11 +50,6 @@ const LoginWith = () => {
     };
 
     // console.log("User in LoginWith:", user);
-
-
-    if (user){
-        return navigate('/user/search');
-    }
 
 
     return (

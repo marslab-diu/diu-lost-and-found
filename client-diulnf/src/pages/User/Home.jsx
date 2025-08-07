@@ -1,21 +1,26 @@
-import React from 'react';
-import icon from '../../assets/icon.svg';
-import LoginWith from '../../components/User/LoginWith';
+import React, { useEffect } from 'react';
+import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 const Home = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/user/search', { replace: true });
+        } else {
+            console.log("User not logged in, redirecting to login page");
+            navigate('/auth/login', { replace: true });
+        }
+    }, [user, navigate]);
 
     
-
-
     return (
-        <div className='min-h-[calc(100vh-52px)] flex flex-col items-center justify-center'>
-            <img
-                src={icon}
-                alt="DIU Lost and Found"
-                className='mx-auto my-10 w-24 h-24'
-            />
-            <LoginWith></LoginWith>
-
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+                <div className="loading loading-ring loading-lg"></div>
+            </div>
         </div>
     );
 };

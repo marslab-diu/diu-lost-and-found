@@ -17,7 +17,7 @@ const AdminLayout = () => {
                 {/* sidebar */}
                 <aside className="w-58 rounded-3xl bg-base-200 py-4 px-1 mt-3 mb-5">
                     <ul className="admin-nav menu space-y-2 text-base-content w-full">
-                        <li><NavLink to="/admin" className="flex items-center gap-3 transition-colors hover:bg-base-300">
+                        <li>  <NavLink to="/admin" className="flex items-center gap-3 transition-colors hover:bg-base-300">
                             <BsHouseDoor size={22} />
                             <span className='text-lg'>Overview</span>
                         </NavLink>
