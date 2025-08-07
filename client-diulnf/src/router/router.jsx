@@ -21,6 +21,7 @@ import UserLogin from "../pages/User/UserLogin";
 import Dashboard from "../pages/Admin/Dashboard";
 import ManageAdmin from "../pages/Admin/ManageAdmin";
 import AdminHome from "../pages/Admin/AdminHome";
+import AdminProfile from "../pages/Admin/AdminProfile";
 
 
 export const router = createBrowserRouter([
@@ -118,6 +119,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <AdminHome></AdminHome>
+            },
+            {
+                path: "profile",
+                element: <AdminProfile></AdminProfile>
             },
             {
                 path: "dashboard",

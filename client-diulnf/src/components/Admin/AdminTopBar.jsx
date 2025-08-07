@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../../assets/logo.svg';
 import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 const AdminTopBar = () => {
@@ -12,7 +12,7 @@ const AdminTopBar = () => {
         logOutUser()
             .then(() => {
                 toast.success("Logged out successfully");
-                navigate('/');
+                navigate('/auth/login/admin', { replace: true });
             })
             .catch((error) => {
                 toast.error("Failed to log out");
@@ -22,7 +22,10 @@ const AdminTopBar = () => {
 
     return (
         <div className='w-11/12 mx-auto flex justify-between items-center py-4'>
-            <img src={logo} alt="Admin Dashboard" className='w-56' />
+            <Link to="/admin/dashboard" className="flex items-center">
+                <img src={logo} alt="DIU Lost and Found" className='w-56' />
+            </Link>
+            
 
             <div className="flex items-center">
                 {loading ? (
@@ -55,6 +58,14 @@ const AdminTopBar = () => {
                                     {user?.email}
                                 </li>
                                 <div className="divider my-1"></div>
+                                <li>
+                                    <NavLink
+                                        to="/admin/profile"
+                                        className="btn btn-ghost btn-sm w-full"
+                                    >
+                                        Profile
+                                    </NavLink>
+                                </li>
                                 <li>
                                     <button
                                         onClick={handleLogout}

@@ -6,7 +6,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { toast } from 'sonner';
 
 const ManageAdmin = () => {
-    const { user, createUser, updateUser, setUser, resetPassword,loading } = useAuth();
+    const { user, createUser, updateUser, setUser, resetPassword, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +24,8 @@ const ManageAdmin = () => {
             name: '',
             email: '',
             password: '',
-            universityId: ''
+            universityId: '',
+            phone: ''
         }
     });
 
@@ -57,6 +58,7 @@ const ManageAdmin = () => {
                 email: data.email,
                 role: 'admin',
                 universityId: data.universityId,
+                phone: data.phone,
             };
 
             await axiosSecure.post('/admins', adminData);
@@ -76,8 +78,8 @@ const ManageAdmin = () => {
 
     // Delete admin mutation
     const deleteAdminMutation = useMutation({
-        mutationFn: async (adminId) => {
-            await axiosSecure.delete(`/admins/${adminId}`);
+        mutationFn: async (email) => {
+            await axiosSecure.delete(`/admins/${email}`);
         },
         onSuccess: () => {
             toast.success('Admin removed successfully');
@@ -103,9 +105,9 @@ const ManageAdmin = () => {
         }
     };
 
-    const handleRemove = (adminId) => {
+    const handleRemove = (email) => {
         if (window.confirm('Are you sure you want to remove this admin?')) {
-            deleteAdminMutation.mutate(adminId);
+            deleteAdminMutation.mutate(email);
         }
     };
 
@@ -125,7 +127,7 @@ const ManageAdmin = () => {
                                 <th>Admin ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Password</th>
+                                <th>Phone</th>
                                 <th>Added On</th>
                                 <th>Time</th>
                                 <th>Actions</th>
@@ -151,9 +153,7 @@ const ManageAdmin = () => {
                                         <td className="font-mono">{admin.universityId}</td>
                                         <td className="font-medium">{admin.name}</td>
                                         <td>{admin.email}</td>
-                                        <td>
-                                            <span className="font-mono">••••••••••••</span>
-                                        </td>
+                                        <td>{admin.phone || 'N/A'}</td>
                                         <td>{admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A'}</td>
                                         <td>{admin.createdAt ? new Date(admin.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}</td>
                                         <td>
@@ -165,7 +165,7 @@ const ManageAdmin = () => {
                                                     Edit
                                                 </button>
                                                 <button
-                                                    onClick={() => handleRemove(admin._id)}
+                                                    onClick={() => handleRemove(admin.email)}
                                                     className="btn btn-sm btn-secondary border-gray-700"
                                                     disabled={deleteAdminMutation.isPending}
                                                 >
@@ -181,8 +181,8 @@ const ManageAdmin = () => {
                 </div>
             </div>
 
-            <div className="flex justify-between items-center mt-6">   
-                <button 
+            <div className="flex justify-between items-center mt-6">
+                <button
                     onClick={() => setIsModalOpen(true)}
                     className="btn btn-primary rounded-full font-light"
                 >
@@ -196,7 +196,7 @@ const ManageAdmin = () => {
                     <div className="modal-box max-w-2xl">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-semibold">Create New Admin</h2>
-                            <button 
+                            <button
                                 onClick={() => setIsModalOpen(false)}
                                 className="btn btn-sm btn-circle btn-ghost"
                             >
@@ -208,12 +208,12 @@ const ManageAdmin = () => {
                             {/* Name */}
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Full Name *
+                                    Full Name
                                 </label>
                                 <input
                                     type="text"
                                     id="name"
-                                    {...register('name', { 
+                                    {...register('name', {
                                         required: 'Full name is required',
                                         minLength: {
                                             value: 2,
@@ -221,9 +221,8 @@ const ManageAdmin = () => {
                                         }
                                     })}
                                     placeholder="Enter admin's full name"
-                                    className={`input input-bordered w-full focus:outline-none ${
-                                        errors.name ? 'input-error' : ''
-                                    }`}
+                                    className={`input input-bordered w-full focus:outline-none ${errors.name ? 'input-error' : ''
+                                        }`}
                                     disabled={createAdminMutation.isPending}
                                 />
                                 {errors.name && (
@@ -239,7 +238,7 @@ const ManageAdmin = () => {
                                 <input
                                     type="email"
                                     id="email"
-                                    {...register('email', { 
+                                    {...register('email', {
                                         required: 'Email is required',
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -247,13 +246,34 @@ const ManageAdmin = () => {
                                         }
                                     })}
                                     placeholder="admin@diu.edu.bd"
-                                    className={`input input-bordered w-full focus:outline-none ${
-                                        errors.email ? 'input-error' : ''
-                                    }`}
+                                    className={`input input-bordered w-full focus:outline-none ${errors.email ? 'input-error' : ''
+                                        }`}
                                     disabled={createAdminMutation.isPending}
                                 />
                                 {errors.email && (
                                     <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                                )}
+                            </div>
+                            {/* Phone Number */}
+                            <div>
+                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Phone Number
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    {...register('phone', {
+                                        pattern: {
+                                            value: /^(\+88)?01[3-9]\d{8}$/,
+                                            message: 'Please enter a valid Bangladeshi phone number'
+                                        }
+                                    })}
+                                    placeholder="e.g., +8801234567890"
+                                    className={`input input-bordered w-full focus:outline-none ${errors.phone ? 'input-error' : ''}`}
+                                    disabled={createAdminMutation.isPending}
+                                />
+                                {errors.phone && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
                                 )}
                             </div>
 
@@ -265,7 +285,7 @@ const ManageAdmin = () => {
                                 <input
                                     type="text"
                                     id="universityId"
-                                    {...register('universityId', { 
+                                    {...register('universityId', {
                                         required: 'University ID is required',
                                         pattern: {
                                             value: /^\w+$/,
@@ -273,9 +293,8 @@ const ManageAdmin = () => {
                                         }
                                     })}
                                     placeholder="e.g., ADMIN001, EMP12345"
-                                    className={`input input-bordered w-full focus:outline-none ${
-                                        errors.universityId ? 'input-error' : ''
-                                    }`}
+                                    className={`input input-bordered w-full focus:outline-none ${errors.universityId ? 'input-error' : ''
+                                        }`}
                                     disabled={createAdminMutation.isPending}
                                 />
                                 {errors.universityId && (
@@ -291,7 +310,7 @@ const ManageAdmin = () => {
                                 <input
                                     type="password"
                                     id="password"
-                                    {...register('password', { 
+                                    {...register('password', {
                                         required: 'Password is required',
                                         minLength: {
                                             value: 6,
@@ -299,9 +318,8 @@ const ManageAdmin = () => {
                                         }
                                     })}
                                     placeholder="Enter a strong password"
-                                    className={`input input-bordered w-full focus:outline-none ${
-                                        errors.password ? 'input-error' : ''
-                                    }`}
+                                    className={`input input-bordered w-full focus:outline-none ${errors.password ? 'input-error' : ''
+                                        }`}
                                     disabled={createAdminMutation.isPending}
                                 />
                                 {errors.password && (

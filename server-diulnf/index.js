@@ -437,13 +437,13 @@ async function run() {
     // add admin
     app.post("/admins", verifyFirebaseToken, async (req, res) => {
       try {
-        const { name, email, universityId } = req.body;
+        const { name, email, universityId, phone } = req.body;
 
         // Validate required fields
-        if (!name || !email || !universityId) {
+        if (!name || !email || !universityId || !phone) {
           return res.status(400).send({
             error: true,
-            message: "Name, email, and university ID are required",
+            message: "Name, email, phone, and university ID are required",
           });
         }
 
@@ -459,6 +459,7 @@ async function run() {
         const adminData = {
           name: name.trim(),
           email: email.trim().toLowerCase(),
+          phone: phone.trim(),
           role: "admin",
           universityId: universityId.trim(),
           createdAt: new Date().toISOString(),
@@ -502,6 +503,104 @@ async function run() {
         });
       }
     });
+
+    // get admin by email
+    app.get("/admins/:email", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.params.email;
+        const adminData = await adminCollection
+          .findOne({ email: email.toLowerCase() });
+        if (adminData) {
+          res.send(adminData);
+        } else {
+          res.status(404).send({  
+            error: true,
+            message: "Admin not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching admin:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch admin",
+        });
+      }
+    });
+
+
+    // update admin
+    app.put("/admins/:email", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.params.email;
+        const { name, universityId,phone } = req.body;
+
+        // Validate required fields
+        if (!name || !universityId || !phone) {
+          return res.status(400).send({
+            error: true,
+            message: "Name and university ID are required",
+          });
+        }
+
+        const updatedAdmin = {
+          name: name.trim(),
+          universityId: universityId.trim(),
+          phone: phone.trim(),
+          updatedAt: new Date(),
+        };
+
+        const result = await adminCollection.updateOne(
+          { email: email.toLowerCase() },
+          { $set: updatedAdmin }
+        );
+
+        if (result.modifiedCount > 0) {
+          res.send({
+            success: true,
+            message: "Admin updated successfully",
+          });
+        } else {
+          res.status(404).send({
+            error: true,
+            message: "Admin not found or no changes made",
+          });
+        }
+      } catch (error) {
+        console.error("Error updating admin:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to update admin",
+        });
+      }
+    });
+
+    // delete admin
+    app.delete("/admins/:email", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.params.email;
+        const result = await adminCollection
+          .deleteOne({ email: email.toLowerCase() });
+        if (result.deletedCount > 0) {  
+          res.send({
+            success: true,
+            message: "Admin deleted successfully",
+          });
+        } else {
+          res.status(404).send({
+            error: true,
+            message: "Admin not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting admin:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to delete admin",
+        });
+      }
+    });
+
+
 
 
 
