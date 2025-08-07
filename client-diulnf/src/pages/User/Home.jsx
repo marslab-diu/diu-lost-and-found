@@ -3,17 +3,23 @@ import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router';
 
 const Home = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (loading) {
+            console.log("Loading user data...");
+            return;
+        }
         if (user) {
+            console.log("User is logged in, redirecting to search page");
             navigate('/user/search', { replace: true });
         } else {
+            console.log(user);
             console.log("User not logged in, redirecting to login page");
             navigate('/auth/login', { replace: true });
         }
-    }, [user, navigate]);
+    }, [user,loading, navigate]);
 
     
     return (
