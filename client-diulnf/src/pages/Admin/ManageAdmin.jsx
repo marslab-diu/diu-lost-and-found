@@ -6,11 +6,13 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { toast } from 'sonner';
 
 const ManageAdmin = () => {
-    const { createUser, updateUser, setUser, resetPassword } = useAuth();
+    const { user, createUser, updateUser, setUser, resetPassword,loading } = useAuth();
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+
+    // console.log("User in ManageAdmin:", user);
 
     const {
         register,
@@ -32,7 +34,10 @@ const ManageAdmin = () => {
         queryFn: async () => {
             const response = await axiosSecure.get('/admins');
             return response.data;
-        }
+        },
+        enabled: !!user && !loading,
+        retry: 1,
+        staleTime: 5 * 60 * 1000
     });
 
     // Create admin mutation

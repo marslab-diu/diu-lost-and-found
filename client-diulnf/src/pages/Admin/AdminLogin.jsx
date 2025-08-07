@@ -19,7 +19,8 @@ const AdminLogin = () => {
         logInUser(email, password)
             .then(() => {
                 setError('');
-                navigate('/admin');
+                // console.log("Admin logged in successfully");
+                navigate('/admin/dashboard', { replace: true });
             })
             .catch(error => {
                 setError(error.message);

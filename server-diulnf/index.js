@@ -490,7 +490,7 @@ async function run() {
     });
 
     // get all admins
-    app.get("/admins", async (req, res) => {
+    app.get("/admins",verifyFirebaseToken, async (req, res) => {
       try {
         const admins = await adminCollection.find({}).toArray();
         res.send(admins);
