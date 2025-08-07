@@ -1,10 +1,15 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 3000;
 
-require("dotenv").config();
+const router = express.Router();
+const cloudinary = require("./cloudinary");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 app.use(express.json());
 
@@ -57,6 +62,112 @@ async function run() {
     );
 
     const usersCollection = client.db("diu-lnf").collection("users");
+    const lostItemsCollection = client.db("diu-lnf").collection("lostItems");
+    const foundItemsCollection = client.db("diu-lnf").collection("foundItems");
+    const counterCollection = client.db("diu-lnf").collection("counters");
+  
+
+  
+    async function getNextLostSequenceValue(sequenceName) {
+      try {
+        const sequenceDocument = await counterCollection.findOneAndUpdate(
+          { _id: sequenceName },
+          { $inc: { sequence_value: 1 } },
+          { returnDocument: "after", upsert: true }
+        );
+
+        console.log("Sequence document result:", sequenceDocument);
+
+        
+        if (sequenceDocument && sequenceDocument.sequence_value) {
+          return sequenceDocument.sequence_value;
+        }
+        
+        else if (sequenceDocument && sequenceDocument.value && sequenceDocument.value.sequence_value) {
+          return sequenceDocument.value.sequence_value;
+        }
+        else {
+          console.error("No sequence document or value found. Full response:", sequenceDocument);
+          throw new Error("Failed to get sequence value");
+        }
+      } catch (error) {
+        console.error("Error in getNextLostSequenceValue:", error);
+        throw error;
+      }
+    }
+
+  
+    async function getNextFoundSequenceValue(sequenceName) {
+      try {
+        const sequenceDocument = await counterCollection.findOneAndUpdate(
+          { _id: sequenceName },
+          { $inc: { sequence_value: 1 } },
+          { returnDocument: "after", upsert: true }
+        );
+
+        // console.log("Sequence document result:", sequenceDocument);
+
+        
+        if (sequenceDocument && sequenceDocument.sequence_value) {
+          return sequenceDocument.sequence_value;
+        }
+        
+        else if (sequenceDocument && sequenceDocument.value && sequenceDocument.value.sequence_value) {
+          return sequenceDocument.value.sequence_value;
+        }
+        else {
+          console.error("No sequence document or value found. Full response:", sequenceDocument);
+          throw new Error("Failed to get sequence value");
+        }
+      } catch (error) {
+        console.error("Error in getNextFoundSequenceValue:", error);
+        throw error;
+      }
+    }
+
+
+
+    // cloudinary post
+    app.post("/upload", upload.single("image"), async (req, res) => {
+      try {
+        const file = req.file;
+        if (!file) {
+          return res
+            .status(400)
+            .send({ error: true, message: "No file uploaded" });
+        }
+
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: "image",
+            folder: "lostItems",
+            transformation: [
+              { width: 500, crop: "scale" },
+              { quality: "auto" },
+              { fetch_format: "webp" },
+            ],
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Cloudinary upload error:", error);
+              return res
+                .status(500)
+                .send({ error: true, message: "Upload failed" });
+            }
+            res.send({
+              success: true,
+              message: "File uploaded successfully",
+              url: result.secure_url,
+            });
+          }
+        );
+
+        stream.end(file.buffer);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        res.status(500).send({ error: true, message: "Internal server error" });
+      }
+    });
 
     // user api's
 
@@ -159,9 +270,103 @@ async function run() {
       }
     });
 
+    // submit a lost item report
+    app.post("/lost-reports", verifyFirebaseToken, async (req, res) => {
+      try {
+        const email = req.tokenEmail;
+        const {
+          itemName,
+          color,
+          item_description,
+          lost_date,
+          lost_time,
+          lost_location,
+          imageUrl,
+        } = req.body;
+
+        
+        // Validate required fields
+        if (!itemName || !item_description || !lost_date || !lost_location) {
+          return res.status(400).send({
+            error: true,
+            message:
+              "Item name, description, lost date, and location are required",
+          });
+        }
+
+        // Get user details
+        const user = await usersCollection.findOne({ email: email });
+
+        if (!user) {
+          return res.status(404).send({
+            error: true,
+            message: "User not found",
+          });
+        }
+
+        // Generate unique report ID using sequence counter
+        const sequenceNumber = await getNextLostSequenceValue("lostlnf");
+        const reportId = `LST${sequenceNumber.toString().padStart(6, "0")}`;
+
+        // Create lost report object
+        const lostReport = {
+          reportId,
+          itemName: itemName.trim(),
+          description: item_description.trim(),
+          color: color ? color.trim() : null,
+          lost_location: lost_location.trim(),
+          lost_date: new Date(lost_date),
+          lost_time: lost_time || null,
+          imageUrl: imageUrl || null,
+          reportedBy: user._id,
+          status: "open",
+          statusUpdatedAt: new Date(),
+          createdAt: new Date(),
+        };
+
+        // console.log("Lost report object to insert:", lostReport);
+
+        // Insert the report
+        const result = await lostItemsCollection.insertOne(lostReport);
+
+        if (result.insertedId) {
+          res.send({
+            success: true,
+            message: "Lost item report submitted successfully",
+            reportId: reportId,
+          });
+        } else {
+          res.status(500).send({
+            error: true,
+            message: "Failed to submit report",
+          });
+        }
+      } catch (error) {
+        console.error("Error submitting lost report:", error);
+        res.status(500).send({
+          error: true,
+          message: "Internal server error",
+          details: error.message,
+        });
+      }
+    });
+
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
+
+    // Test environment variables
+    app.get("/test-env", async (req, res) => {
+      res.send({
+        cloudinary_configured: {
+          cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? "SET" : "NOT_SET",
+          api_key: process.env.CLOUDINARY_API_KEY ? "SET" : "NOT_SET",
+          api_secret: process.env.CLOUDINARY_API_SECRET ? "SET" : "NOT_SET",
+        },
+      });
+    });
+
+
   } finally {
     // await client.close();
   }
