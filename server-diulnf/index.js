@@ -65,9 +65,8 @@ async function run() {
     const lostItemsCollection = client.db("diu-lnf").collection("lostItems");
     const foundItemsCollection = client.db("diu-lnf").collection("foundItems");
     const counterCollection = client.db("diu-lnf").collection("counters");
-  
+    const adminCollection = client.db("diu-lnf").collection("admins");
 
-  
     async function getNextLostSequenceValue(sequenceName) {
       try {
         const sequenceDocument = await counterCollection.findOneAndUpdate(
@@ -78,16 +77,19 @@ async function run() {
 
         console.log("Sequence document result:", sequenceDocument);
 
-        
         if (sequenceDocument && sequenceDocument.sequence_value) {
           return sequenceDocument.sequence_value;
-        }
-        
-        else if (sequenceDocument && sequenceDocument.value && sequenceDocument.value.sequence_value) {
+        } else if (
+          sequenceDocument &&
+          sequenceDocument.value &&
+          sequenceDocument.value.sequence_value
+        ) {
           return sequenceDocument.value.sequence_value;
-        }
-        else {
-          console.error("No sequence document or value found. Full response:", sequenceDocument);
+        } else {
+          console.error(
+            "No sequence document or value found. Full response:",
+            sequenceDocument
+          );
           throw new Error("Failed to get sequence value");
         }
       } catch (error) {
@@ -96,7 +98,6 @@ async function run() {
       }
     }
 
-  
     async function getNextFoundSequenceValue(sequenceName) {
       try {
         const sequenceDocument = await counterCollection.findOneAndUpdate(
@@ -107,16 +108,19 @@ async function run() {
 
         // console.log("Sequence document result:", sequenceDocument);
 
-        
         if (sequenceDocument && sequenceDocument.sequence_value) {
           return sequenceDocument.sequence_value;
-        }
-        
-        else if (sequenceDocument && sequenceDocument.value && sequenceDocument.value.sequence_value) {
+        } else if (
+          sequenceDocument &&
+          sequenceDocument.value &&
+          sequenceDocument.value.sequence_value
+        ) {
           return sequenceDocument.value.sequence_value;
-        }
-        else {
-          console.error("No sequence document or value found. Full response:", sequenceDocument);
+        } else {
+          console.error(
+            "No sequence document or value found. Full response:",
+            sequenceDocument
+          );
           throw new Error("Failed to get sequence value");
         }
       } catch (error) {
@@ -124,8 +128,6 @@ async function run() {
         throw error;
       }
     }
-
-
 
     // cloudinary post
     app.post("/upload", upload.single("image"), async (req, res) => {
@@ -284,7 +286,6 @@ async function run() {
           imageUrl,
         } = req.body;
 
-        
         // Validate required fields
         if (!itemName || !item_description || !lost_date || !lost_location) {
           return res.status(400).send({
@@ -352,8 +353,7 @@ async function run() {
     });
 
     // submit a found item report
-    app.post("/found-reports", verifyFirebaseToken, async (req, res) =>
-      {
+    app.post("/found-reports", verifyFirebaseToken, async (req, res) => {
       try {
         const email = req.tokenEmail;
         const {
@@ -432,6 +432,79 @@ async function run() {
       }
     });
 
+    // admin api's
+
+    // add admin
+    app.post("/admins", verifyFirebaseToken, async (req, res) => {
+      try {
+        const { name, email, universityId } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !universityId) {
+          return res.status(400).send({
+            error: true,
+            message: "Name, email, and university ID are required",
+          });
+        }
+
+        // Check if admin already exists
+        const existingAdmin = await adminCollection.findOne({ email: email });
+        if (existingAdmin) {
+          return res.status(409).send({
+            error: true,
+            message: "Admin with this email already exists",
+          });
+        }
+
+        const adminData = {
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          role: "admin",
+          universityId: universityId.trim(),
+          createdAt: new Date().toISOString(),
+        };
+
+        // Insert the admin
+        const result = await adminCollection.insertOne(adminData);
+
+        if (result.insertedId) {
+          res.send({
+            success: true,
+            message: "Admin added successfully",
+            adminId: result.insertedId,
+          });
+        } else {
+          res.status(500).send({
+            error: true,
+            message: "Failed to add admin",
+          });
+        }
+      } catch (error) {
+        console.error("Error adding admin:", error);
+        res.status(500).send({
+          error: true,
+          message: "Internal server error",
+          details: error.message,
+        });
+      }
+    });
+
+    // get all admins
+    app.get("/admins", async (req, res) => {
+      try {
+        const admins = await adminCollection.find({}).toArray();
+        res.send(admins);
+      } catch (error) {
+        console.error("Error fetching admins:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch admins",
+        });
+      }
+    });
+
+
+
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
@@ -446,8 +519,6 @@ async function run() {
         },
       });
     });
-
-
   } finally {
     // await client.close();
   }

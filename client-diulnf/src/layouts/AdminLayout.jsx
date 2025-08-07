@@ -46,24 +46,24 @@ const AdminLayout = () => {
                         <div className="my-0 divider"></div>
                         
                         <span className='text-md'>Item Management</span>
-                        <li><NavLink to="/admin/lost-reports" className="flex items-center gap-2 transition-colors hover:bg-base-300">
+                        <li><NavLink to="/admin/stored-items" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsArchive size={22} />
                             <span className='text-lg'>Recovered Items</span>
                         </NavLink>
                         </li>
-                        <li><NavLink to="/admin/found-reports" className="flex items-center gap-2 transition-colors hover:bg-base-300">
+                        <li><NavLink to="/admin/claimed-items" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsBookmark size={22} />
                             <span className='text-lg'>Claimed Items</span>
                         </NavLink>
                         </li>
-                        <li><NavLink to="/admin/admin-entry" className="flex items-center gap-2 transition-colors hover:bg-base-300">
+                        <li><NavLink to="/admin/resolved-items" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsPatchCheck size={22} />
                             <span className='text-lg'>Resolved Items</span>
                         </NavLink>
                         </li>
 
                         <div className="my-0 divider"></div>
-                        <li><NavLink to="/admin/admin-entry" className="flex items-center gap-2 transition-colors hover:bg-base-300">
+                        <li><NavLink to="/admin/manage-admin" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsPeople size={22} />
                             <span className='text-lg'>Manage Admin</span>
                         </NavLink>
@@ -74,7 +74,7 @@ const AdminLayout = () => {
                 </aside>
 
                 {/* Main Content Area */}
-                <main className="flex-1 bg-gray-50 p-6 mt-3 mb-5 overflow-y-auto">
+                <main className="flex-1 p-6 mt-3 mb-5 overflow-y-auto">
                     <Outlet />
                 </main>
             </div>
