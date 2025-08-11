@@ -286,7 +286,7 @@ async function run() {
           imageUrl,
         } = req.body;
 
-        // Validate required fields
+        
         if (!itemName || !item_description || !lost_date || !lost_location) {
           return res.status(400).send({
             error: true,
@@ -295,7 +295,7 @@ async function run() {
           });
         }
 
-        // Get user details
+        
         const user = await usersCollection.findOne({ email: email });
 
         if (!user) {
@@ -305,11 +305,10 @@ async function run() {
           });
         }
 
-        // Generate unique report ID using sequence counter
+        
         const sequenceNumber = await getNextLostSequenceValue("lostlnf");
         const reportId = `LST${sequenceNumber.toString().padStart(6, "0")}`;
 
-        // Create lost report object
         const lostReport = {
           reportId,
           itemName: itemName.trim(),
@@ -321,13 +320,12 @@ async function run() {
           imageUrl: imageUrl || null,
           reportedBy: user._id,
           status: "open",
-          statusUpdatedAt: new Date(),
-          createdAt: new Date(),
+          reportedAt: new Date(),
         };
 
         // console.log("Lost report object to insert:", lostReport);
 
-        // Insert the report
+        
         const result = await lostItemsCollection.insertOne(lostReport);
 
         if (result.insertedId) {
@@ -366,7 +364,7 @@ async function run() {
           imageUrl,
         } = req.body;
 
-        // Validate required fields
+        
         if (!itemName || !item_description || !found_date || !found_location) {
           return res.status(400).send({
             error: true,
@@ -375,7 +373,7 @@ async function run() {
           });
         }
 
-        // Get user details
+        
         const user = await usersCollection.findOne({ email: email });
 
         if (!user) {
@@ -385,11 +383,11 @@ async function run() {
           });
         }
 
-        // Generate unique report ID using sequence counter
+        
         const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
         const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
 
-        // Create found report object
+        
         const foundReport = {
           reportId,
           itemName: itemName.trim(),
@@ -401,13 +399,12 @@ async function run() {
           imageUrl: imageUrl || null,
           reportedBy: user._id,
           status: "reported",
-          statusUpdatedAt: new Date(),
-          createdAt: new Date(),
+          reportedAt: new Date(),
         };
 
         // console.log("Found report object to insert:", foundReport);
 
-        // Insert the report
+       t
         const result = await foundItemsCollection.insertOne(foundReport);
 
         if (result.insertedId) {
@@ -435,40 +432,41 @@ async function run() {
     // get all lost item report where status is open and along with user details
     app.get("/lost-reports/open", async (req, res) => {
       try {
-        const reports = await lostItemsCollection.aggregate([
-          { $match: { status: "open" } },
-          {
-            $lookup: {
-              from: "users",
-              localField: "reportedBy",
-              foreignField: "_id",
-              as: "reportedByUser",
+        const reports = await lostItemsCollection
+          .aggregate([
+            { $match: { status: "open" } },
+            {
+              $lookup: {
+                from: "users",
+                localField: "reportedBy",
+                foreignField: "_id",
+                as: "reportedByUser",
+              },
             },
-          },
-          { $unwind: "$reportedByUser" },
-          {
-            $project: {
-              _id: 1,
-              reportId: 1,
-              itemName: 1,
-              description: 1,
-              color: 1,
-              lost_location: 1,
-              lost_date: 1,
-              lost_time: 1,
-              imageUrl: 1,
-              reportedBy: 1,
-              status: 1,
-              statusUpdatedAt: 1,
-              createdAt: 1,
-              "reportedByUser.name": 1,
-              "reportedByUser.email": 1,
-              "reportedByUser.universityId": 1,
-              "reportedByUser.phone": 1,
-              "reportedByUser.department": 1,
+            { $unwind: "$reportedByUser" },
+            {
+              $project: {
+                _id: 1,
+                reportId: 1,
+                itemName: 1,
+                description: 1,
+                color: 1,
+                lost_location: 1,
+                lost_date: 1,
+                lost_time: 1,
+                imageUrl: 1,
+                reportedBy: 1,
+                status: 1,
+                reportedAt: 1,
+                "reportedByUser.name": 1,
+                "reportedByUser.email": 1,
+                "reportedByUser.universityId": 1,
+                "reportedByUser.phone": 1,
+                "reportedByUser.department": 1,
+              },
             },
-          },
-        ]).toArray();
+          ])
+          .toArray();
 
         res.send(reports);
       } catch (error) {
@@ -479,6 +477,100 @@ async function run() {
         });
       }
     });
+
+    // get all found item report where status is reported and along with user details
+    app.get("/found-reports/reported", async (req, res) => {
+      try {
+        const reports = await foundItemsCollection
+          .aggregate([
+            { $match: { status: "reported" } },
+            {
+              $lookup: {
+                from: "users",
+                localField: "reportedBy",
+                foreignField: "_id",
+                as: "reportedByUser",
+              },
+            },
+            { $unwind: "$reportedByUser" },
+            {
+              $project: {
+                _id: 1,
+                reportId: 1,
+                itemName: 1,
+                description: 1,
+                color: 1,
+                found_location: 1,
+                found_date: 1,
+                found_time: 1,
+                imageUrl: 1,
+                reportedBy: 1,
+                status: 1,
+                reportedAt: 1,
+                "reportedByUser.name": 1,
+                "reportedByUser.email": 1,
+                "reportedByUser.universityId": 1,
+                "reportedByUser.phone": 1,
+                "reportedByUser.department": 1,
+              },
+            },
+          ])
+          .toArray();
+
+        res.send(reports);
+      } catch (error) {
+        console.error("Error fetching reported found reports:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch reported found reports",
+        });
+      }
+    });
+
+    // update fount item report to stored
+    app.patch("/found-reports/:reportId/store", verifyFirebaseToken, async (req, res) => {
+        try {
+          const { reportId } = req.params;
+          const { storedBy } = req.body; // admin email
+
+          if (!storedBy) {
+            return res.status(400).send({
+              error: true,
+              message: "storedBy (admin email) is required",
+            });
+          }
+
+          const result = await foundItemsCollection.updateOne(
+            { reportId },
+            {
+              $set: {
+                status: "stored",
+                storedBy,
+                storedAt: new Date(),
+              },
+            }
+          );
+
+          if (result.modifiedCount > 0) {
+            res.send({
+              success: true,
+              message: "Item status updated to stored",
+            });
+          } else {
+            res.status(404).send({
+              error: true,
+              message: "Found report not found or already stored",
+            });
+          }
+        } catch (error) {
+          console.error("Error updating found report status:", error);
+          res.status(500).send({
+            error: true,
+            message: "Failed to update found report status",
+          });
+        }
+      }
+    );
 
     // admin api's
 
