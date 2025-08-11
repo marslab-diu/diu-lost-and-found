@@ -286,7 +286,6 @@ async function run() {
           imageUrl,
         } = req.body;
 
-        
         if (!itemName || !item_description || !lost_date || !lost_location) {
           return res.status(400).send({
             error: true,
@@ -295,7 +294,6 @@ async function run() {
           });
         }
 
-        
         const user = await usersCollection.findOne({ email: email });
 
         if (!user) {
@@ -305,7 +303,6 @@ async function run() {
           });
         }
 
-        
         const sequenceNumber = await getNextLostSequenceValue("lostlnf");
         const reportId = `LST${sequenceNumber.toString().padStart(6, "0")}`;
 
@@ -325,7 +322,6 @@ async function run() {
 
         // console.log("Lost report object to insert:", lostReport);
 
-        
         const result = await lostItemsCollection.insertOne(lostReport);
 
         if (result.insertedId) {
@@ -364,7 +360,6 @@ async function run() {
           imageUrl,
         } = req.body;
 
-        
         if (!itemName || !item_description || !found_date || !found_location) {
           return res.status(400).send({
             error: true,
@@ -373,7 +368,6 @@ async function run() {
           });
         }
 
-        
         const user = await usersCollection.findOne({ email: email });
 
         if (!user) {
@@ -383,11 +377,9 @@ async function run() {
           });
         }
 
-        
         const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
         const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
 
-        
         const foundReport = {
           reportId,
           itemName: itemName.trim(),
@@ -404,7 +396,6 @@ async function run() {
 
         // console.log("Found report object to insert:", foundReport);
 
-       t
         const result = await foundItemsCollection.insertOne(foundReport);
 
         if (result.insertedId) {
@@ -528,7 +519,10 @@ async function run() {
     });
 
     // update fount item report to stored
-    app.patch("/found-reports/:reportId/store", verifyFirebaseToken, async (req, res) => {
+    app.patch(
+      "/found-reports/:reportId/store",
+      verifyFirebaseToken,
+      async (req, res) => {
         try {
           const { reportId } = req.params;
           const { storedBy } = req.body; // admin email
@@ -740,6 +734,106 @@ async function run() {
         });
       }
     });
+
+    // manual entry
+    app.post("/found-reports/manual-entry", verifyFirebaseToken, async (req, res) => {
+        try {
+          const adminEmail = req.tokenEmail;
+          const {
+            itemName,
+            color,
+            item_description,
+            found_date,
+            found_time,
+            found_location,
+            imageUrl,
+            founder,
+          } = req.body;
+
+          
+          if (
+            !itemName ||
+            !item_description ||
+            !found_date ||
+            !found_location ||
+            !founder?.email
+          ) {
+            return res.status(400).send({
+              error: true,
+              message: "All required fields must be provided",
+            });
+          }
+
+          // chck if founder exists
+          let founderUser = await usersCollection.findOne({
+            email: founder.email.trim().toLowerCase(),
+          });
+
+          if (!founderUser) {
+          
+            const founderProfile = {
+              email: founder.email.trim().toLowerCase(),
+              name: founder.name,
+              universityId: founder.universityId,
+              phone: founder.phone,
+              department: founder.department,
+              role: "user",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            const result = await usersCollection.insertOne(founderProfile);
+            founderUser = await usersCollection.findOne({
+              _id: result.insertedId,
+            });
+          }
+
+          
+          const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
+          const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
+
+         
+          const foundReport = {
+            reportId,
+            itemName: itemName.trim(),
+            description: item_description.trim(),
+            color: color ? color.trim() : null,
+            found_location: found_location.trim(),
+            found_date: new Date(found_date),
+            found_time: found_time || null,
+            imageUrl: imageUrl || null,
+            reportedBy: founderUser._id,
+            status: "stored",
+            storedBy: adminEmail,
+            storedAt: new Date(),
+            createdAt: new Date(),
+          };
+
+          const insertResult = await foundItemsCollection.insertOne(
+            foundReport
+          );
+
+          if (insertResult.insertedId) {
+            res.send({
+              success: true,
+              message: "Manual found item entry submitted successfully",
+              reportId,
+            });
+          } else {
+            res.status(500).send({
+              error: true,
+              message: "Failed to submit manual entry",
+            });
+          }
+        } catch (error) {
+          console.error("Error submitting manual found entry:", error);
+          res.status(500).send({
+            error: true,
+            message: "Internal server error",
+            details: error.message,
+          });
+        }
+      }
+    );
 
     app.get("/test", async (req, res) => {
       res.send("Test route is working");

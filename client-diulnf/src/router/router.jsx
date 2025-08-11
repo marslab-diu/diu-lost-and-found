@@ -24,6 +24,7 @@ import AdminHome from "../pages/Admin/AdminHome";
 import AdminProfile from "../pages/Admin/AdminProfile";
 import LostReports from "../pages/Admin/LostReports";
 import FoundReports from "../pages/Admin/FoundReports";
+import ManualEntry from "../pages/Admin/ManualEntry";
 
 
 export const router = createBrowserRouter([
@@ -141,6 +142,10 @@ export const router = createBrowserRouter([
             {
                 path: "found-reports",
                 element: <FoundReports></FoundReports>
+            },
+            {
+                path: "admin-entry",
+                element: <ManualEntry></ManualEntry>
             }
         ]
 
