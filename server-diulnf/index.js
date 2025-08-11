@@ -432,6 +432,54 @@ async function run() {
       }
     });
 
+    // get all lost item report where status is open and along with user details
+    app.get("/lost-reports/open", async (req, res) => {
+      try {
+        const reports = await lostItemsCollection.aggregate([
+          { $match: { status: "open" } },
+          {
+            $lookup: {
+              from: "users",
+              localField: "reportedBy",
+              foreignField: "_id",
+              as: "reportedByUser",
+            },
+          },
+          { $unwind: "$reportedByUser" },
+          {
+            $project: {
+              _id: 1,
+              reportId: 1,
+              itemName: 1,
+              description: 1,
+              color: 1,
+              lost_location: 1,
+              lost_date: 1,
+              lost_time: 1,
+              imageUrl: 1,
+              reportedBy: 1,
+              status: 1,
+              statusUpdatedAt: 1,
+              createdAt: 1,
+              "reportedByUser.name": 1,
+              "reportedByUser.email": 1,
+              "reportedByUser.universityId": 1,
+              "reportedByUser.phone": 1,
+              "reportedByUser.department": 1,
+            },
+          },
+        ]).toArray();
+
+        res.send(reports);
+      } catch (error) {
+        console.error("Error fetching open lost reports:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch open lost reports",
+        });
+      }
+    });
+
     // admin api's
 
     // add admin
@@ -491,7 +539,7 @@ async function run() {
     });
 
     // get all admins
-    app.get("/admins",verifyFirebaseToken, async (req, res) => {
+    app.get("/admins", verifyFirebaseToken, async (req, res) => {
       try {
         const admins = await adminCollection.find({}).toArray();
         res.send(admins);
@@ -508,12 +556,13 @@ async function run() {
     app.get("/admins/:email", verifyFirebaseToken, async (req, res) => {
       try {
         const email = req.params.email;
-        const adminData = await adminCollection
-          .findOne({ email: email.toLowerCase() });
+        const adminData = await adminCollection.findOne({
+          email: email.toLowerCase(),
+        });
         if (adminData) {
           res.send(adminData);
         } else {
-          res.status(404).send({  
+          res.status(404).send({
             error: true,
             message: "Admin not found",
           });
@@ -527,12 +576,11 @@ async function run() {
       }
     });
 
-
     // update admin
     app.put("/admins/:email", verifyFirebaseToken, async (req, res) => {
       try {
         const email = req.params.email;
-        const { name, universityId,phone } = req.body;
+        const { name, universityId, phone } = req.body;
 
         // Validate required fields
         if (!name || !universityId || !phone) {
@@ -578,9 +626,10 @@ async function run() {
     app.delete("/admins/:email", verifyFirebaseToken, async (req, res) => {
       try {
         const email = req.params.email;
-        const result = await adminCollection
-          .deleteOne({ email: email.toLowerCase() });
-        if (result.deletedCount > 0) {  
+        const result = await adminCollection.deleteOne({
+          email: email.toLowerCase(),
+        });
+        if (result.deletedCount > 0) {
           res.send({
             success: true,
             message: "Admin deleted successfully",
@@ -599,10 +648,6 @@ async function run() {
         });
       }
     });
-
-
-
-
 
     app.get("/test", async (req, res) => {
       res.send("Test route is working");

@@ -22,6 +22,8 @@ import Dashboard from "../pages/Admin/Dashboard";
 import ManageAdmin from "../pages/Admin/ManageAdmin";
 import AdminHome from "../pages/Admin/AdminHome";
 import AdminProfile from "../pages/Admin/AdminProfile";
+import LostReports from "../pages/Admin/LostReports";
+import FoundReports from "../pages/Admin/FoundReports";
 
 
 export const router = createBrowserRouter([
@@ -131,6 +133,14 @@ export const router = createBrowserRouter([
             {
                 path: "manage-admin",
                 element: <ManageAdmin></ManageAdmin>
+            },
+            {
+                path: "lost-reports",
+                element: <LostReports></LostReports>
+            },
+            {
+                path: "found-reports",
+                element: <FoundReports></FoundReports>
             }
         ]
 

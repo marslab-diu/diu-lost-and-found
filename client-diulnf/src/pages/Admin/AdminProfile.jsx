@@ -110,7 +110,6 @@ const AdminProfile = () => {
     return (
         <div className="py-8">
             <div className="max-w-2xl mx-auto bg-white rounded-lg p-6">
-                {/* Profile Picture */}
                 {/* <div className="text-center mb-8">
                     <div className="w-24 h-24 mx-auto rounded-full overflow-hidden bg-gray-200 mb-4">
                         {user?.photoURL ? (
@@ -135,9 +134,9 @@ const AdminProfile = () => {
                     <h2 className="text-xl font-semibold text-gray-800">Admin Profile</h2>
                 </div> */}
 
-                {/* Profile Form */}
+               
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Name */}
+                   
                     <div>
                         <input
                             type="text"
@@ -158,7 +157,7 @@ const AdminProfile = () => {
                         )}
                     </div>
 
-                    {/* Email (Read-only) */}
+                    
                     <div>
                         <input
                             type="email"
@@ -168,7 +167,7 @@ const AdminProfile = () => {
                         />
                     </div>
 
-                    {/* University ID */}
+                
                     <div>
                         <input
                             type="text"
@@ -185,7 +184,7 @@ const AdminProfile = () => {
                         )}
                     </div>
 
-                    {/* Phone Number */}
+                  
                     <div>
                         <input
                             type="tel"
@@ -207,7 +206,7 @@ const AdminProfile = () => {
                     </div>
 
                
-                    {/* Created At (Read-only) */}
+                    
                     <div>
                         <input
                             type="text"
@@ -217,7 +216,7 @@ const AdminProfile = () => {
                         />
                     </div>
 
-                    {/* Update Profile Button */}
+                   
                     <button
                         type="submit"
                         disabled={isSubmitting || updateProfileMutation.isPending}
@@ -227,9 +226,9 @@ const AdminProfile = () => {
                     </button>
                 </form>
 
-                {/* Action Buttons */}
+                
                 <div className="space-y-3 mt-6">
-                    {/* Reset Password Button */}
+                   
                     <button
                         onClick={handleResetPassword}
                         className="btn text-lg py-6 w-full bg-orange-500 text-white  rounded-lg font-medium hover:bg-orange-600 transition-colors"
@@ -237,7 +236,7 @@ const AdminProfile = () => {
                         Reset Password
                     </button>
 
-                    {/* Logout Button */}
+                   
                     <button
                         onClick={handleLogout}
                         className="btn text-lg py-6 w-full bg-error text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
