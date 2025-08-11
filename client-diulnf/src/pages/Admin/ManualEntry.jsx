@@ -316,7 +316,6 @@ const ManualEntry = () => {
                             {errors.founder_phone && <p className="text-red-500 text-sm mt-1">{errors.founder_phone.message}</p>}
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Founder Department</label>
                             <select
                                 {...register('founder_department', { required: 'Founder department is required' })}
                                 value={selectedDepartment}
