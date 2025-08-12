@@ -64,7 +64,7 @@ const ItemCard = ({ item }) => {
 
     return (
         <>
-            <div className="bg-white rounded-2xl border-1 border-accent/20 overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div className="bg-white rounded-2xl border-1 border-accent/20 overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col h-full">
                
                 <div className="relative">
                     <img
@@ -76,7 +76,7 @@ const ItemCard = ({ item }) => {
                 </div>
 
                 
-                <div className="p-4">
+                <div className="flex flex-col p-4 flex-1">
                     
                     <h3 className="text-lg font-semibold mb-3">{item.itemName}</h3>
 
@@ -117,10 +117,11 @@ const ItemCard = ({ item }) => {
                     </div>
 
                     {/* Description */}
-                    <div className="mb-4 border-t border-gray-200 pt-3">
+                    <div className="mb-4 border-t border-gray-200 pt-3 flex-1">
                         <p className="text-gray-600 text-sm">{item.description}</p>
                     </div>
 
+                    
                     {/* Claim Button */}
                     <button
                         onClick={handleClaimClick}
@@ -129,6 +130,8 @@ const ItemCard = ({ item }) => {
                     >
                         {item.claimedStatus ? 'Already Claimed' : 'Claim this item'}
                     </button>
+
+
                 </div>
             </div>
 
@@ -149,7 +152,7 @@ const ItemCard = ({ item }) => {
                                     className="focus-within:outline-none textarea textarea-bordered w-full resize-none"
                                 />
                             </div>
-                            <div className="modal-action">
+                            <div className="modal-action mt-auto">
                                 <button
                                     type="button"
                                     onClick={() => {
