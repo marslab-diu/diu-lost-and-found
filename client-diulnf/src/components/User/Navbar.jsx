@@ -64,11 +64,11 @@ const Navbar = () => {
               <img
               referrerPolicy="no-referrer"
               className="select-none"
-              src={user?.photoURL || "/default-avatar.jpg"}
+              src={user?.photoURL || "/avatar.jpg"}
               alt="profile"
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "/default-avatar.jpg";
+                e.currentTarget.src = "/avatar.jpg";
               }}
               />
             </div>
