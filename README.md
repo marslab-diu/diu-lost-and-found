@@ -19,8 +19,8 @@
 
 
 <p>
-  <strong>🎨 UI Design Phase: Complete</strong><br>
-  <em>All interface designs and interactive prototypes are finished. Backend development is now in progress.</em>
+  <strong>Live Site</strong><br>
+  <a href="https://diu-lost-and-found.web.app/" target="_blank">https://diu-lost-and-found.web.app/</a>
 </p>
 
 </div>
@@ -222,28 +222,28 @@ The complete UI/UX design phase has been finished, featuring:
 - [x] Project architecture planning
 
 ### Phase 2: Backend Development 🚧 **IN PROGRESS**
-- [ ] Technology stack finalization
-- [ ] Database schema design
-- [ ] User authentication system
-- [ ] Database setup and models
-- [ ] API endpoints for CRUD operations
-- [ ] Admin panel backend
-- [ ] Email notification system
+- [x] Technology stack finalization
+- [x] Database schema design
+- [x] User authentication system
+- [x] Database setup and models
+- [x] API endpoints for CRUD operations
+- [x] Admin panel backend
+- [x] Email notification system
 
 ### Phase 3: Frontend Development 📋 **READY TO START**
-- [ ] Component library setup based on designs
-- [ ] User interface implementation
-- [ ] Student/Faculty dashboards
-- [ ] Admin panel interface
-- [ ] Responsive design implementation
-- [ ] Integration with backend APIs
+- [x] Component library setup based on designs
+- [x] User interface implementation
+- [x] Student/Faculty dashboards
+- [x] Admin panel interface
+- [x] Responsive design implementation
+- [x] Integration with backend APIs
 
 ### Phase 4: Integration & Testing 🔮 **PLANNED**
-- [ ] End-to-end testing
-- [ ] User acceptance testing
-- [ ] Performance optimization
-- [ ] Security testing
-- [ ] Deployment preparation
+- [x] End-to-end testing
+- [x] User acceptance testing
+- [x] Performance optimization
+- [x] Security testing
+- [x] Deployment preparation
 
 ### Phase 5: Advanced Features 🌟 **FUTURE**
 - [ ] Mobile application
