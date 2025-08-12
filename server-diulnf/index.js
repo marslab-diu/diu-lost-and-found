@@ -188,7 +188,7 @@ async function run() {
       }
 
       // Check if all required fields are present nd not empty
-      const requiredFields = ["name", "universityId", "phone", "department"];
+      const requiredFields = ["name", "universityId", "phone", "department" , "photoURL"];
       const isComplete = requiredFields.every(
         (field) => user[field] && user[field].toString().trim() !== ""
       );
@@ -247,6 +247,7 @@ async function run() {
           phone,
           department,
           role: "user",
+          photoURL: req.body.photoURL, 
           updatedAt: new Date(),
           createdAt: new Date(),
         };

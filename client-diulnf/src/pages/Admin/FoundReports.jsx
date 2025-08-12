@@ -104,10 +104,10 @@ const FoundReports = () => {
                         <div className="flex flex-col md:flex-row items-center gap-6 p-8 pb-4">
                             <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                                 <img
-                                    src="/default-avatar.jpg"
+                                    src="/avatar.jpg"
                                     alt="Reporter"
                                     className="w-full h-full object-cover"
-                                    onError={e => { e.currentTarget.src = "/default-avatar.jpg"; }}
+                                    onError={e => { e.currentTarget.src = "/avatar.jpg"; }}
                                 />
                             </div>
                             <div className="flex-1 grid grid-cols-3 gap-x-8 gap-y-2 w-full">

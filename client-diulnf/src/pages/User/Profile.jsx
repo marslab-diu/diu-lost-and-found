@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router'; // Fixed import
 import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 
@@ -79,13 +79,15 @@ const Profile = () => {
         handleSubmit,
         formState: { errors, isSubmitting },
         reset,
-        setValue
+        setValue,
+        watch
     } = useForm({
         defaultValues: {
             name: '',
             universityId: '',
             phone: '',
-            department: ''
+            department: '',
+            photoURL: '' // This will be set from user data
         }
     });
 
@@ -103,13 +105,17 @@ const Profile = () => {
     // Update profile mutation
     const updateProfileMutation = useMutation({
         mutationFn: async (profileData) => {
-            const response = await axiosSecure.post('/user/profile', profileData);
+            // Include photoURL in the data being sent
+            const dataToSend = {
+                ...profileData,
+                photoURL: user?.photoURL || '' // Always include current photoURL
+            };
+            const response = await axiosSecure.post('/user/profile', dataToSend);
             return response.data;
         },
         onSuccess: () => {
             toast.success('Profile updated successfully!');
             queryClient.invalidateQueries(['userProfile']);
-            // Redirect to search page after successful update
             setTimeout(() => {
                 navigate('/user/search', { replace: true });
             }, 1000);
@@ -120,7 +126,6 @@ const Profile = () => {
         }
     });
 
-    
     useEffect(() => {
         if (userProfile) {
             // Reset form with existing profile data
@@ -128,16 +133,24 @@ const Profile = () => {
                 name: userProfile.name || '',
                 universityId: userProfile.universityId || '',
                 phone: userProfile.phone || '',
-                department: userProfile.department || ''
+                department: userProfile.department || '',
+                photoURL: user?.photoURL || userProfile.photoURL || ''
             });
             setSelectedDepartment(userProfile.department || '');
         } else if (user && !isLoadingProfile) {
             // Prefill with Firebase user data if no profile exists
-            setValue('name', user.displayName || '');
+            reset({
+                name: user.displayName || '',
+                universityId: '',
+                phone: '',
+                department: '',
+                photoURL: user.photoURL || ''
+            });
         }
-    }, [userProfile, user, isLoadingProfile, reset, setValue]);
+    }, [userProfile, user, isLoadingProfile, reset]);
 
     const onSubmit = (data) => {
+        // The photoURL will be added in the mutation function
         updateProfileMutation.mutate(data);
     };
 
@@ -161,7 +174,7 @@ const Profile = () => {
 
     if (isLoadingProfile) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-[70vh] flex items-center justify-center">
                 <div className="text-center">
                     <div className="loading loading-spinner loading-lg"></div>
                     <p className="mt-4">Loading profile...</p>
@@ -191,11 +204,17 @@ const Profile = () => {
                             </div>
                         )}
                     </div>
-                    
                 </div>
 
                 {/* Profile Form */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Hidden input for photoURL */}
+                    <input
+                        type="hidden"
+                        {...register('photoURL')}
+                        value={user?.photoURL || ''}
+                    />
+
                     <div>
                         <input
                             type="text"
@@ -291,7 +310,7 @@ const Profile = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting || updateProfileMutation.isPending}
-                        className="w-full bg-primary text-white py-3 rounded-lg font-medium cursor-pointer"
+                        className="w-full bg-primary text-white py-3 rounded-lg font-medium cursor-pointer disabled:opacity-50"
                     >
                         {(isSubmitting || updateProfileMutation.isPending) ? 'Updating Profile...' : 'Update Profile'}
                     </button>

@@ -30,6 +30,7 @@ import ClaimedItems from "../pages/Admin/ClaimedItems";
 import AdminResolvedItems from "../pages/Admin/AdminResolvedItems";
 import SearchedResults from "../pages/User/SearchedResults";
 import AdminRoute from "../routes/AdminRoute";
+import Error from "../pages/Shared/Error";
 
 
 export const router = createBrowserRouter([
@@ -170,5 +171,9 @@ export const router = createBrowserRouter([
             }
         ]
 
+    },
+    {
+        path: "*",
+        element: <Error></Error>
     }
 ]);

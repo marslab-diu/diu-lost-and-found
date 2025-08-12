@@ -42,7 +42,7 @@ const Help = () => {
         <div className="w-full">
             <div className="max-w-[1920px] mx-auto px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* Left Column - If You Have Lost an Item */}
+                   
                     <div>
                         <h2 className="text-2xl font-bold mb-5">If You Have Lost an Item</h2>
 
@@ -93,7 +93,7 @@ const Help = () => {
                         </AccordionItem>
                     </div>
 
-                    {/* Right Column - If You Have Found an Item */}
+                    {/* If You Have Found an Item */}
                     <div>
                         <h2 className="text-2xl font-bold mb-5">If You Have Found an Item</h2>
 
