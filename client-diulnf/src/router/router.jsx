@@ -29,6 +29,7 @@ import AdminRecoveredItems from "../pages/Admin/AdminRecoveredItems";
 import ClaimedItems from "../pages/Admin/ClaimedItems";
 import AdminResolvedItems from "../pages/Admin/AdminResolvedItems";
 import SearchedResults from "../pages/User/SearchedResults";
+import AdminRoute from "../routes/AdminRoute";
 
 
 export const router = createBrowserRouter([
@@ -125,7 +126,7 @@ export const router = createBrowserRouter([
     // admin
     {
         path: "/admin",
-        element: <AdminLayout></AdminLayout>,
+        element: <AdminRoute><AdminLayout></AdminLayout></AdminRoute>,
         children: [
             {
                 index: true,

@@ -151,10 +151,6 @@ const AdminRecoveredItems = () => {
 
     return (
         <div className="p-0">
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Stored Items</h1>
-                <p className="text-gray-600 mt-2">Items currently stored and available for handover</p>
-            </div>
             
             <div className="bg-white rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">

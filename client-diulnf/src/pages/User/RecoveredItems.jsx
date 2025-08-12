@@ -10,7 +10,7 @@ const RecoveredItems = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // Fetch stored items for users - only when user is authenticated and not loading
+   
     const { data: items = [], isLoading, error } = useQuery({
         queryKey: ['stored-items-user'],
         enabled: !loading && !!user, 
@@ -27,7 +27,7 @@ const RecoveredItems = () => {
         staleTime: 5 * 60 * 1000, 
     });
 
-    // Filter items based on date range
+   
     const filteredItems = useMemo(() => {
         if (!startDate && !endDate) return items;
 

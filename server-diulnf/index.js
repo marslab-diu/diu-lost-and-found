@@ -736,10 +736,7 @@ async function run() {
     });
 
     // manual entry
-    app.post(
-      "/found-reports/manual-entry",
-      verifyFirebaseToken,
-      async (req, res) => {
+    app.post( "/found-reports/manual-entry", verifyFirebaseToken, async (req, res) => {
         try {
           const adminEmail = req.tokenEmail;
           const {
@@ -947,10 +944,7 @@ async function run() {
     );
 
     // get all resolved found item reports
-    app.get(
-      "/found-reports/resolved",
-      verifyFirebaseToken,
-      async (req, res) => {
+    app.get("/found-reports/resolved", verifyFirebaseToken, async (req, res) => {
         try {
           const pipeline = [
             {
