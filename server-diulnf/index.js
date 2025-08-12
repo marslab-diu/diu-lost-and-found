@@ -455,6 +455,7 @@ async function run() {
                 "reportedByUser.universityId": 1,
                 "reportedByUser.phone": 1,
                 "reportedByUser.department": 1,
+                "reportedByUser.photoURL": 1,
               },
             },
           ])
@@ -504,6 +505,7 @@ async function run() {
                 "reportedByUser.universityId": 1,
                 "reportedByUser.phone": 1,
                 "reportedByUser.department": 1,
+                "reportedByUser.photoURL": 1,
               },
             },
           ])
