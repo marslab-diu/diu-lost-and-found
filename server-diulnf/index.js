@@ -1346,6 +1346,148 @@ async function run() {
         }
     });
 
+    // GET /admin/dashboard/stats - Get dashboard statistics
+    app.get("/admin/dashboard/stats", verifyFirebaseToken, async (req, res) => {
+        try {
+            // Get lost reports count
+            const lostReports = await lostItemsCollection.countDocuments();
+            
+            // Get found reports count
+            const foundReports = await foundItemsCollection.countDocuments();
+            
+            // Get recovered items count (status: stored)
+            const recoveredItems = await foundItemsCollection.countDocuments({ 
+                status: "stored",
+                $expr: { $eq: [{ $size: { $ifNull: ["$claims", []] } }, 0] }
+            });
+            
+            // Get claimed items count (has claims)
+            const claimedItems = await foundItemsCollection.countDocuments({
+                status: "stored",
+                $expr: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] }
+            });
+            
+            // Get resolved items count (status: resolved)
+            const resolvedItems = await foundItemsCollection.countDocuments({ 
+                status: "resolved" 
+            });
+
+            const stats = {
+                lostReports,
+                foundReports,
+                recoveredItems,
+                claimedItems,
+                resolvedItems
+            };
+
+            res.send(stats);
+        } catch (error) {
+            console.error("Error fetching dashboard stats:", error);
+            res.status(500).send({
+                error: true,
+                message: "Failed to fetch dashboard statistics"
+            });
+        }
+    });
+
+    // GET /admin/dashboard/activity-log - Get recent admin activities
+    app.get("/admin/dashboard/activity-log", verifyFirebaseToken, async (req, res) => {
+        try {
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: "admins",
+                        localField: "storedBy",
+                        foreignField: "email",
+                        as: "adminInfo"
+                    }
+                },
+                {
+                    $match: {
+                        storedBy: { $exists: true, $ne: null }
+                    }
+                },
+                {
+                    $addFields: {
+                        adminName: {
+                            $ifNull: [
+                                { $arrayElemAt: ["$adminInfo.name", 0] },
+                                "$storedBy"
+                            ]
+                        },
+                        action: {
+                            $concat: ["Received #", "$reportId"]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        adminName: 1,
+                        action: 1,
+                        createdAt: "$storedAt"
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $limit: 10
+                }
+            ];
+
+            const activities = await foundItemsCollection.aggregate(pipeline).toArray();
+            res.send(activities);
+        } catch (error) {
+            console.error("Error fetching activity log:", error);
+            res.status(500).send({
+                error: true,
+                message: "Failed to fetch activity log"
+            });
+        }
+    });
+
+    // GET /admin/dashboard/leaderboard - Get top submitters
+    app.get("/admin/dashboard/leaderboard", verifyFirebaseToken, async (req, res) => {
+        try {
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "reportedBy",
+                        foreignField: "_id",
+                        as: "userInfo"
+                    }
+                },
+                {
+                    $unwind: "$userInfo"
+                },
+                {
+                    $group: {
+                        _id: "$reportedBy",
+                        name: { $first: "$userInfo.name" },
+                        email: { $first: "$userInfo.email" },
+                        submissionCount: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { submissionCount: -1 }
+                },
+                {
+                    $limit: 10
+                }
+            ];
+
+            const leaderboard = await foundItemsCollection.aggregate(pipeline).toArray();
+            res.send(leaderboard);
+        } catch (error) {
+            console.error("Error fetching submitter leaderboard:", error);
+            res.status(500).send({
+                error: true,
+                message: "Failed to fetch submitter leaderboard"
+            });
+        }
+    });
+
     // Test environment variables
     app.get("/test-env", async (req, res) => {
       res.send({
