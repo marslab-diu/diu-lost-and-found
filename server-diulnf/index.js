@@ -1205,6 +1205,147 @@ async function run() {
       res.send("Test route is working");
     });
 
+    // Get items with claims (simple list)
+    app.get("/found-reports/claimed", verifyFirebaseToken, async (req, res) => {
+        try {
+            const pipeline = [
+                {
+                    $match: { 
+                        status: "stored",
+                        $expr: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "reportedBy",
+                        foreignField: "_id",
+                        as: "reportedByUser"
+                    }
+                },
+                {
+                    $unwind: "$reportedByUser"
+                },
+                {
+                    $addFields: {
+                        claimedStatus: true
+                    }
+                },
+                {
+                    $project: {
+                        reportId: 1,
+                        itemName: 1,
+                        color: 1,
+                        found_date: 1,
+                        found_time: 1,
+                        found_location: 1,
+                        createdAt: 1,
+                        claimedStatus: 1
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                }
+            ];
+
+            const claimedItems = await foundItemsCollection.aggregate(pipeline).toArray();
+            res.send(claimedItems);
+        } catch (error) {
+            console.error("Error fetching claimed items:", error);
+            res.status(500).send({
+                error: true,
+                message: "Failed to fetch claimed items"
+            });
+        }
+    });
+
+    // GET Get detailed item info with claimer details  
+    app.get("/found-reports/details/:id", verifyFirebaseToken, async (req, res) => {
+        try {
+            const itemId = req.params.id;
+            
+            const pipeline = [
+                {
+                    $match: { 
+                        _id: new ObjectId(itemId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "reportedBy",
+                        foreignField: "_id",
+                        as: "reportedByUser"
+                    }
+                },
+                {
+                    $unwind: "$reportedByUser"
+                }
+            ];
+
+            const itemResult = await foundItemsCollection.aggregate(pipeline).toArray();
+            
+            if (itemResult.length === 0) {
+                return res.status(404).send({
+                    error: true,
+                    message: "Item not found"
+                });
+            }
+
+            const item = itemResult[0];
+
+            
+            if (item.claims && item.claims.length > 0) {
+                const claimsWithUserDetails = [];
+                
+                for (let claim of item.claims) {
+                    try {
+                        const userDetails = await usersCollection.findOne({ 
+                            _id: claim.userId  
+                        });
+                        
+                        claimsWithUserDetails.push({
+                            userId: claim.userId,
+                            message: claim.message,
+                            claimedAt: claim.claimedAt,
+                            userDetails: userDetails ? {
+                                _id: userDetails._id,
+                                name: userDetails.name,
+                                email: userDetails.email,
+                                universityId: userDetails.universityId,
+                                phone: userDetails.phone,
+                                department: userDetails.department
+                            } : null
+                        });
+                    } catch (error) {
+                        console.error(`Error fetching user details for ${claim.userId}:`, error);
+                        claimsWithUserDetails.push({
+                            userId: claim.userId,
+                            message: claim.message,
+                            claimedAt: claim.claimedAt,
+                            userDetails: null
+                        });
+                    }
+                }
+                
+                item.claimsWithUserDetails = claimsWithUserDetails;
+            } else {
+                item.claimsWithUserDetails = [];
+            }
+
+            
+            delete item.claims;
+
+            res.send(item);
+        } catch (error) {
+            console.error("Error fetching item details:", error);
+            res.status(500).send({
+                error: true,
+                message: "Failed to fetch item details"
+            });
+        }
+    });
+
     // Test environment variables
     app.get("/test-env", async (req, res) => {
       res.send({
