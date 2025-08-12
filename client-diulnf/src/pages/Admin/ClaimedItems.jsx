@@ -276,7 +276,7 @@ const ClaimedItems = () => {
 
                         <div className="divider m-0"></div>
                         
-                        {/* Actions - Only Close Button */}
+                        
                         <div className="flex justify-end gap-3 px-8 py-6">
                             <button 
                                 className="btn btn-outline rounded-full" 
