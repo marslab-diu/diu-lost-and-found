@@ -34,21 +34,21 @@ const Navbar = () => {
       <div className="flex items-center gap-8">
         <NavLink
         to={"/user/report-lost"}
-        className="font-medium hover:text-primary"
+        className="text-xs md:text-lg font-medium hover:text-primary"
         >
         Report Lost
         </NavLink>
 
         <NavLink
         to="/user/report-found"
-        className="font-medium hover:text-primary"
+        className="text-xs md:text-lg font-medium hover:text-primary"
         >
         Report Found
         </NavLink>
         
         <NavLink
         to="/user/recovered-items"
-        className="font-medium hover:text-primary"
+        className="text-xs md:text-lg font-medium hover:text-primary"
         >
         Recovered Items
         </NavLink>

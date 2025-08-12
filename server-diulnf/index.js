@@ -736,104 +736,104 @@ async function run() {
     });
 
     // manual entry
-    app.post("/found-reports/manual-entry", verifyFirebaseToken, async (req, res) => {
-      try {
-        const adminEmail = req.tokenEmail;
-        const {
-          itemName,
-          color,
-          item_description,
-          found_date,
-          found_time,
-          found_location,
-          imageUrl,
-          founder,
-        } = req.body;
+    app.post(
+      "/found-reports/manual-entry",
+      verifyFirebaseToken,
+      async (req, res) => {
+        try {
+          const adminEmail = req.tokenEmail;
+          const {
+            itemName,
+            color,
+            item_description,
+            found_date,
+            found_time,
+            found_location,
+            imageUrl,
+            founder,
+          } = req.body;
 
+          if (
+            !itemName ||
+            !item_description ||
+            !found_date ||
+            !found_location ||
+            !founder?.email
+          ) {
+            return res.status(400).send({
+              error: true,
+              message: "All required fields must be provided",
+            });
+          }
 
-        if (
-          !itemName ||
-          !item_description ||
-          !found_date ||
-          !found_location ||
-          !founder?.email
-        ) {
-          return res.status(400).send({
-            error: true,
-            message: "All required fields must be provided",
-          });
-        }
-
-        // chck if founder exists
-        let founderUser = await usersCollection.findOne({
-          email: founder.email.trim().toLowerCase(),
-        });
-
-        if (!founderUser) {
-
-          const founderProfile = {
+          // chck if founder exists
+          let founderUser = await usersCollection.findOne({
             email: founder.email.trim().toLowerCase(),
-            name: founder.name,
-            universityId: founder.universityId,
-            phone: founder.phone,
-            department: founder.department,
-            role: "user",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-          const result = await usersCollection.insertOne(founderProfile);
-          founderUser = await usersCollection.findOne({
-            _id: result.insertedId,
           });
-        }
 
+          if (!founderUser) {
+            const founderProfile = {
+              email: founder.email.trim().toLowerCase(),
+              name: founder.name,
+              universityId: founder.universityId,
+              phone: founder.phone,
+              department: founder.department,
+              role: "user",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            const result = await usersCollection.insertOne(founderProfile);
+            founderUser = await usersCollection.findOne({
+              _id: result.insertedId,
+            });
+          }
 
-        const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
-        const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
+          const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
+          const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
 
-
-        const foundReport = {
-          reportId,
-          itemName: itemName.trim(),
-          description: item_description.trim(),
-          color: color ? color.trim() : null,
-          found_location: found_location.trim(),
-          found_date: new Date(found_date),
-          found_time: found_time || null,
-          imageUrl: imageUrl || null,
-          reportedBy: founderUser._id,
-          status: "stored",
-          storedBy: adminEmail,
-          storedAt: new Date(),
-          createdAt: new Date(),
-        };
-
-        const insertResult = await foundItemsCollection.insertOne(
-          foundReport
-        );
-
-        if (insertResult.insertedId) {
-          res.send({
-            success: true,
-            message: "Manual found item entry submitted successfully",
+          const foundReport = {
             reportId,
-          });
-        } else {
+            itemName: itemName.trim(),
+            description: item_description.trim(),
+            color: color ? color.trim() : null,
+            found_location: found_location.trim(),
+            found_date: new Date(found_date),
+            found_time: found_time || null,
+            imageUrl: imageUrl || null,
+            reportedBy: founderUser._id,
+            status: "stored",
+            storedBy: adminEmail,
+            storedAt: new Date(),
+            createdAt: new Date(),
+          };
+
+          const insertResult = await foundItemsCollection.insertOne(
+            foundReport
+          );
+
+          if (insertResult.insertedId) {
+            res.send({
+              success: true,
+              message: "Manual found item entry submitted successfully",
+              reportId,
+            });
+          } else {
+            res.status(500).send({
+              error: true,
+              message: "Failed to submit manual entry",
+            });
+          }
+        } catch (error) {
+          console.error("Error submitting manual found entry:", error);
           res.status(500).send({
             error: true,
-            message: "Failed to submit manual entry",
+            message: "Internal server error",
+            details: error.message,
           });
         }
-      } catch (error) {
-        console.error("Error submitting manual found entry:", error);
-        res.status(500).send({
-          error: true,
-          message: "Internal server error",
-          details: error.message,
-        });
       }
-    }
     );
+
     // get the status stored found items
     app.get("/found-reports/stored", verifyFirebaseToken, async (req, res) => {
       try {
@@ -947,52 +947,198 @@ async function run() {
     );
 
     // get all resolved found item reports
-    app.get("/found-reports/resolved", verifyFirebaseToken, async (req, res) => {
-      try {
-        const pipeline = [
-          {
-            $match: { status: "resolved" }
-          },
-          {
-            $lookup: {
-              from: "users",
-              localField: "reportedBy",
-              foreignField: "_id",
-              as: "reportedByUser"
-            }
-          },
-          {
-            $unwind: "$reportedByUser"
-          },
-          {
-            $lookup: {
-              from: "users",
-              localField: "takenBy",
-              foreignField: "_id",
-              as: "takenByUser"
-            }
-          },
-          {
-            $unwind: {
-              path: "$takenByUser",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $sort: { handedOverAt: -1 }
-          }
-        ];
+    app.get(
+      "/found-reports/resolved",
+      verifyFirebaseToken,
+      async (req, res) => {
+        try {
+          const pipeline = [
+            {
+              $match: { status: "resolved" },
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "reportedBy",
+                foreignField: "_id",
+                as: "reportedByUser",
+              },
+            },
+            {
+              $unwind: "$reportedByUser",
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "takenBy",
+                foreignField: "_id",
+                as: "takenByUser",
+              },
+            },
+            {
+              $unwind: {
+                path: "$takenByUser",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $sort: { handedOverAt: -1 },
+            },
+          ];
 
-        const resolvedItems = await foundItemsCollection.aggregate(pipeline).toArray();
-        res.send(resolvedItems);
-      } catch (error) {
-        console.error("Error fetching resolved items:", error);
-        res.status(500).send({
-          error: true,
-          message: "Failed to fetch resolved items"
-        });
+          const resolvedItems = await foundItemsCollection
+            .aggregate(pipeline)
+            .toArray();
+          res.send(resolvedItems);
+        } catch (error) {
+          console.error("Error fetching resolved items:", error);
+          res.status(500).send({
+            error: true,
+            message: "Failed to fetch resolved items",
+          });
+        }
       }
-    });
+    );
+
+    // get stored items for user claiming
+    app.get(
+      "/found-reports/stored-for-users",
+      verifyFirebaseToken,
+      async (req, res) => {
+        try {
+          const pipeline = [
+            {
+              $match: { status: "stored" },
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "reportedBy",
+                foreignField: "_id",
+                as: "reportedByUser",
+              },
+            },
+            {
+              $unwind: "$reportedByUser",
+            },
+            {
+              $addFields: {
+                claimedStatus: {
+                  $cond: {
+                    if: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] },
+                    then: true,
+                    else: false,
+                  },
+                },
+              },
+            },
+            {
+              $sort: { createdAt: -1 },
+            },
+          ];
+
+          const storedItems = await foundItemsCollection
+            .aggregate(pipeline)
+            .toArray();
+          res.send(storedItems);
+        } catch (error) {
+          console.error("Error fetching stored items for users:", error);
+          res.status(500).send({
+            error: true,
+            message: "Failed to fetch stored items",
+          });
+        }
+      }
+    );
+
+    // claim an item
+    app.patch(
+      "/found-reports/:reportId/claim",
+      verifyFirebaseToken,
+      async (req, res) => {
+        try {
+          const { reportId } = req.params;
+          const { message, userId } = req.body;
+          const claimerEmail = req.tokenEmail;
+
+          if (!userId) {
+            return res.status(400).send({
+              error: true,
+              message: "User ID is required",
+            });
+          }
+
+          // Get the user who is claiming
+          const claimerUser = await usersCollection.findOne({
+            email: claimerEmail,
+          });
+          if (!claimerUser) {
+            return res.status(404).send({
+              error: true,
+              message: "User not found",
+            });
+          }
+
+          // Check if item exists and is in stored status
+          const item = await foundItemsCollection.findOne({
+            reportId,
+            status: "stored",
+          });
+          if (!item) {
+            return res.status(404).send({
+              error: true,
+              message: "Item not found or not available for claiming",
+            });
+          }
+
+          // Check if user has already claimed this item
+          const existingClaim = item.claims?.find(
+            (claim) => claim.userId.toString() === claimerUser._id.toString()
+          );
+
+          if (existingClaim) {
+            return res.status(400).send({
+              error: true,
+              message: "You have already claimed this item",
+            });
+          }
+
+          // Add claim to the item
+          const claimData = {
+            userId: claimerUser._id,
+            message: message || "",
+            claimedAt: new Date(),
+          };
+
+          const updateResult = await foundItemsCollection.updateOne(
+            { reportId },
+            {
+              $push: { claims: claimData },
+              $set: { statusUpdatedAt: new Date() },
+            }
+          );
+
+          if (updateResult.modifiedCount > 0) {
+            res.send({
+              success: true,
+              message: "Claim submitted successfully",
+            });
+          } else {
+            res.status(500).send({
+              error: true,
+              message: "Failed to submit claim",
+            });
+          }
+        } catch (error) {
+          console.error("Error claiming item:", error);
+          res.status(500).send({
+            error: true,
+            message: "Failed to submit claim",
+            details: error.message,
+          });
+        }
+      }
+    );
 
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
