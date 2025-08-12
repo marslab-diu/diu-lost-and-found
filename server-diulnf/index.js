@@ -1001,6 +1001,20 @@ async function run() {
       verifyFirebaseToken,
       async (req, res) => {
         try {
+          const userEmail = req.tokenEmail;
+          
+          // Get the current user's ObjectId
+          const currentUser = await usersCollection.findOne({
+            email: userEmail,
+          });
+          
+          if (!currentUser) {
+            return res.status(404).send({
+              error: true,
+              message: "User not found",
+            });
+          }
+
           const pipeline = [
             {
               $match: { status: "stored" },
@@ -1020,7 +1034,9 @@ async function run() {
               $addFields: {
                 claimedStatus: {
                   $cond: {
-                    if: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] },
+                    if: {
+                      $in: [currentUser._id, { $ifNull: ["$claims.userId", []] }]
+                    },
                     then: true,
                     else: false,
                   },
@@ -1139,11 +1155,24 @@ async function run() {
     app.get("/found-reports/search", verifyFirebaseToken, async (req, res) => {
       try {
         const { q } = req.query;
+        const userEmail = req.tokenEmail;
 
         if (!q || q.trim() === "") {
           return res.status(400).send({
             error: true,
             message: "Search query is required",
+          });
+        }
+
+        // Get the current user's ObjectId
+        const currentUser = await usersCollection.findOne({
+          email: userEmail,
+        });
+        
+        if (!currentUser) {
+          return res.status(404).send({
+            error: true,
+            message: "User not found",
           });
         }
 
@@ -1176,7 +1205,9 @@ async function run() {
             $addFields: {
               claimedStatus: {
                 $cond: {
-                  if: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] },
+                  if: {
+                    $in: [currentUser._id, { $ifNull: ["$claims.userId", []] }]
+                  },
                   then: true,
                   else: false,
                 },
