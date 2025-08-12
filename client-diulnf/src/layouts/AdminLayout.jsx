@@ -46,7 +46,7 @@ const AdminLayout = () => {
                         <div className="my-0 divider"></div>
                         
                         <span className='text-md'>Item Management</span>
-                        <li><NavLink to="/admin/stored-items" className="flex items-center gap-2 transition-colors hover:bg-base-300">
+                        <li><NavLink to="/admin/recovered-items" className="flex items-center gap-2 transition-colors hover:bg-base-300">
                             <BsArchive size={22} />
                             <span className='text-lg'>Recovered Items</span>
                         </NavLink>
