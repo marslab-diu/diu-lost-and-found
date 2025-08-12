@@ -160,7 +160,7 @@ const ClaimedItems = () => {
                                 <div className="flex flex-col md:flex-row items-center gap-6 p-8 pb-4">
                                     <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                                         <img
-                                            src="/avatar.jpg"
+                                            src={itemDetails.reportedByUser?.photoURL || "/avatar.jpg"}
                                             alt="Founder"
                                             className="w-full h-full object-cover"
                                             onError={e => { e.currentTarget.src = "/avatar.jpg"; }}
