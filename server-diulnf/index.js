@@ -737,104 +737,104 @@ async function run() {
 
     // manual entry
     app.post("/found-reports/manual-entry", verifyFirebaseToken, async (req, res) => {
-        try {
-          const adminEmail = req.tokenEmail;
-          const {
-            itemName,
-            color,
-            item_description,
-            found_date,
-            found_time,
-            found_location,
-            imageUrl,
-            founder,
-          } = req.body;
+      try {
+        const adminEmail = req.tokenEmail;
+        const {
+          itemName,
+          color,
+          item_description,
+          found_date,
+          found_time,
+          found_location,
+          imageUrl,
+          founder,
+        } = req.body;
 
-          
-          if (
-            !itemName ||
-            !item_description ||
-            !found_date ||
-            !found_location ||
-            !founder?.email
-          ) {
-            return res.status(400).send({
-              error: true,
-              message: "All required fields must be provided",
-            });
-          }
 
-          // chck if founder exists
-          let founderUser = await usersCollection.findOne({
-            email: founder.email.trim().toLowerCase(),
-          });
-
-          if (!founderUser) {
-          
-            const founderProfile = {
-              email: founder.email.trim().toLowerCase(),
-              name: founder.name,
-              universityId: founder.universityId,
-              phone: founder.phone,
-              department: founder.department,
-              role: "user",
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
-            const result = await usersCollection.insertOne(founderProfile);
-            founderUser = await usersCollection.findOne({
-              _id: result.insertedId,
-            });
-          }
-
-          
-          const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
-          const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
-
-         
-          const foundReport = {
-            reportId,
-            itemName: itemName.trim(),
-            description: item_description.trim(),
-            color: color ? color.trim() : null,
-            found_location: found_location.trim(),
-            found_date: new Date(found_date),
-            found_time: found_time || null,
-            imageUrl: imageUrl || null,
-            reportedBy: founderUser._id,
-            status: "stored",
-            storedBy: adminEmail,
-            storedAt: new Date(),
-            createdAt: new Date(),
-          };
-
-          const insertResult = await foundItemsCollection.insertOne(
-            foundReport
-          );
-
-          if (insertResult.insertedId) {
-            res.send({
-              success: true,
-              message: "Manual found item entry submitted successfully",
-              reportId,
-            });
-          } else {
-            res.status(500).send({
-              error: true,
-              message: "Failed to submit manual entry",
-            });
-          }
-        } catch (error) {
-          console.error("Error submitting manual found entry:", error);
-          res.status(500).send({
+        if (
+          !itemName ||
+          !item_description ||
+          !found_date ||
+          !found_location ||
+          !founder?.email
+        ) {
+          return res.status(400).send({
             error: true,
-            message: "Internal server error",
-            details: error.message,
+            message: "All required fields must be provided",
           });
         }
+
+        // chck if founder exists
+        let founderUser = await usersCollection.findOne({
+          email: founder.email.trim().toLowerCase(),
+        });
+
+        if (!founderUser) {
+
+          const founderProfile = {
+            email: founder.email.trim().toLowerCase(),
+            name: founder.name,
+            universityId: founder.universityId,
+            phone: founder.phone,
+            department: founder.department,
+            role: "user",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          const result = await usersCollection.insertOne(founderProfile);
+          founderUser = await usersCollection.findOne({
+            _id: result.insertedId,
+          });
+        }
+
+
+        const sequenceNumber = await getNextFoundSequenceValue("foundlnf");
+        const reportId = `FND${sequenceNumber.toString().padStart(6, "0")}`;
+
+
+        const foundReport = {
+          reportId,
+          itemName: itemName.trim(),
+          description: item_description.trim(),
+          color: color ? color.trim() : null,
+          found_location: found_location.trim(),
+          found_date: new Date(found_date),
+          found_time: found_time || null,
+          imageUrl: imageUrl || null,
+          reportedBy: founderUser._id,
+          status: "stored",
+          storedBy: adminEmail,
+          storedAt: new Date(),
+          createdAt: new Date(),
+        };
+
+        const insertResult = await foundItemsCollection.insertOne(
+          foundReport
+        );
+
+        if (insertResult.insertedId) {
+          res.send({
+            success: true,
+            message: "Manual found item entry submitted successfully",
+            reportId,
+          });
+        } else {
+          res.status(500).send({
+            error: true,
+            message: "Failed to submit manual entry",
+          });
+        }
+      } catch (error) {
+        console.error("Error submitting manual found entry:", error);
+        res.status(500).send({
+          error: true,
+          message: "Internal server error",
+          details: error.message,
+        });
       }
+    }
     );
-        // get the status stored found items
+    // get the status stored found items
     app.get("/found-reports/stored", verifyFirebaseToken, async (req, res) => {
       try {
         const pipeline = [
@@ -945,6 +945,55 @@ async function run() {
         }
       }
     );
+
+    // get all resolved found item reports
+    app.get("/found-reports/resolved", verifyFirebaseToken, async (req, res) => {
+      try {
+        const pipeline = [
+          {
+            $match: { status: "resolved" }
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "reportedBy",
+              foreignField: "_id",
+              as: "reportedByUser"
+            }
+          },
+          {
+            $unwind: "$reportedByUser"
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "takenBy",
+              foreignField: "_id",
+              as: "takenByUser"
+            }
+          },
+          {
+            $unwind: {
+              path: "$takenByUser",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $sort: { handedOverAt: -1 }
+          }
+        ];
+
+        const resolvedItems = await foundItemsCollection.aggregate(pipeline).toArray();
+        res.send(resolvedItems);
+      } catch (error) {
+        console.error("Error fetching resolved items:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch resolved items"
+        });
+      }
+    });
+
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
