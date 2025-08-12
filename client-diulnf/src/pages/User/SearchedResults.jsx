@@ -1,33 +1,36 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import ItemCard from '../../components/User/ItemCard';
 import useAuth from '../../hooks/useAuth';
 
-const RecoveredItems = () => {
+const SearchedResults = () => {
     const axiosSecure = useAxiosSecure();
     const { user, loading } = useAuth();
+    const [searchParams] = useSearchParams();
+    const searchQuery = searchParams.get('q') || '';
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // Fetch stored items for users - only when user is authenticated and not loading
+
     const { data: items = [], isLoading, error } = useQuery({
-        queryKey: ['stored-items-user'],
-        enabled: !loading && !!user, 
+        queryKey: ['search-items', searchQuery],
+        enabled: !loading && !!user && !!searchQuery,
         queryFn: async () => {
             try {
-                const response = await axiosSecure.get('/found-reports/stored-for-users');
+                const response = await axiosSecure.get(`/found-reports/search?q=${encodeURIComponent(searchQuery)}`);
                 return response.data;
             } catch (error) {
-                console.error('Error fetching stored items:', error);
+                console.error('Error fetching search results:', error);
                 throw error;
             }
         },
         retry: 1,
-        staleTime: 5 * 60 * 1000, 
+        staleTime: 5 * 60 * 1000,
     });
 
-    // Filter items based on date range
+   
     const filteredItems = useMemo(() => {
         if (!startDate && !endDate) return items;
 
@@ -47,16 +50,16 @@ const RecoveredItems = () => {
         });
     }, [items, startDate, endDate]);
 
-    // Clear filters
+ 
     const clearFilters = () => {
         setStartDate('');
         setEndDate('');
     };
 
-    // Show loading spinner while auth is loading
+   
     if (loading) {
         return (
-            <div className=" py-8">
+            <div className="py-8">
                 <div className="w-11/12 mx-auto px-4">
                     <div className="flex justify-center items-center h-64">
                         <div className="loading loading-spinner loading-lg"></div>
@@ -67,7 +70,7 @@ const RecoveredItems = () => {
         );
     }
 
-    // Show error state if there's an error
+
     if (error) {
         return (
             <div className="min-h-screen py-8">
@@ -79,10 +82,10 @@ const RecoveredItems = () => {
                             </svg>
                         </div>
                         <h3 className="text-xl font-medium text-red-600 mb-2">
-                            Error Loading Items
+                            Error Loading Search Results
                         </h3>
                         <p className="text-gray-500 mb-4">
-                            There was an error loading the recovered items. Please try again.
+                            There was an error loading the search results. Please try again.
                         </p>
                         <button 
                             onClick={() => window.location.reload()}
@@ -96,29 +99,55 @@ const RecoveredItems = () => {
         );
     }
 
+    // Show msg if no search query
+    if (!searchQuery) {
+        return (
+            <div className="py-8">
+                <div className="w-11/12 mx-auto px-4">
+                    <div className="text-center py-16">
+                        <div className="text-gray-400 mb-4">
+                            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-medium text-gray-600 mb-2">
+                            No Search Query
+                        </h3>
+                        <p className="text-gray-500">
+                            Please enter a search term to find items.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="py-8">
             <div className="w-11/12 mx-auto px-4">
-                
+               
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-8">
-                    
+               
                     <div className="flex-1">
                         <h2 className='text-lg font-semibold text-gray-800'>
-                            Showing {filteredItems.length} recovered items
+                            Search results for "{searchQuery}"
                         </h2>
-                        {(startDate || endDate) && (
-                            <p className="text-sm text-gray-500 mt-1">
-                                {startDate && endDate ? 
-                                    `between ${new Date(startDate).toLocaleDateString()} and ${new Date(endDate).toLocaleDateString()}` :
-                                    startDate ? 
-                                        `from ${new Date(startDate).toLocaleDateString()}` :
-                                        `until ${new Date(endDate).toLocaleDateString()}`
-                                }
-                            </p>
-                        )}
+                        <p className="text-sm text-gray-500 mt-1">
+                            Showing {filteredItems.length} items found
+                            {(startDate || endDate) && (
+                                <span>
+                                    {startDate && endDate ? 
+                                        ` between ${new Date(startDate).toLocaleDateString()} and ${new Date(endDate).toLocaleDateString()}` :
+                                        startDate ? 
+                                            ` from ${new Date(startDate).toLocaleDateString()}` :
+                                            ` until ${new Date(endDate).toLocaleDateString()}`
+                                    }
+                                </span>
+                            )}
+                        </p>
                     </div>
 
-                    
+                   
                     <div className="flex flex-col sm:flex-row items-center gap-3">
                         <div className="flex items-center gap-2">
                             <input
@@ -152,28 +181,28 @@ const RecoveredItems = () => {
                     </div>
                 </div>
 
-                
+           
                 {isLoading && (
                     <div className="flex justify-center items-center h-64">
                         <div className="loading loading-spinner loading-lg"></div>
-                        <p className="ml-4">Loading items...</p>
+                        <p className="ml-4">Searching items...</p>
                     </div>
                 )}
 
-                {/* Empty State */}
+                
                 {!isLoading && filteredItems.length === 0 && (
                     <div className="text-center py-16">
                         <div className="text-gray-400 mb-4">
                             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m13-4v4.01M7 9v4.01" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
                         <h3 className="text-xl font-medium text-gray-600 mb-2">
-                            {items.length === 0 ? 'No Items Available' : 'No Items Found'}
+                            {items.length === 0 ? 'No Items Found' : 'No Items Match Filter'}
                         </h3>
                         <p className="text-gray-500">
                             {items.length === 0 ? 
-                                'There are currently no recovered items available for claiming.' :
+                                `No items found matching "${searchQuery}". Try searching with different keywords.` :
                                 'No items found for the selected date range. Try adjusting your filters.'
                             }
                         </p>
@@ -188,7 +217,7 @@ const RecoveredItems = () => {
                     </div>
                 )}
 
-                {/* Items Grid */}
+                
                 {!isLoading && filteredItems.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
                         {filteredItems.map((item) => (
@@ -201,4 +230,4 @@ const RecoveredItems = () => {
     );
 };
 
-export default RecoveredItems;
+export default SearchedResults;

@@ -1140,6 +1140,73 @@ async function run() {
       }
     );
 
+    // GET /found-reports/search - Search items by query
+    app.get("/found-reports/search", verifyFirebaseToken, async (req, res) => {
+      try {
+        const { q } = req.query;
+
+        if (!q || q.trim() === "") {
+          return res.status(400).send({
+            error: true,
+            message: "Search query is required",
+          });
+        }
+
+        const searchQuery = q.trim();
+
+        const pipeline = [
+          {
+            $match: {
+              status: "stored",
+              $or: [
+                { itemName: { $regex: searchQuery, $options: "i" } },
+                { description: { $regex: searchQuery, $options: "i" } },
+                { color: { $regex: searchQuery, $options: "i" } },
+                { found_location: { $regex: searchQuery, $options: "i" } },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "reportedBy",
+              foreignField: "_id",
+              as: "reportedByUser",
+            },
+          },
+          {
+            $unwind: "$reportedByUser",
+          },
+          {
+            $addFields: {
+              claimedStatus: {
+                $cond: {
+                  if: { $gt: [{ $size: { $ifNull: ["$claims", []] } }, 0] },
+                  then: true,
+                  else: false,
+                },
+              },
+            },
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+        ];
+
+        const searchResults = await foundItemsCollection
+          .aggregate(pipeline)
+          .toArray();
+
+        res.send(searchResults);
+      } catch (error) {
+        console.error("Error searching items:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to search items",
+        });
+      }
+    });
+
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });

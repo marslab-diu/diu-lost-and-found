@@ -28,6 +28,7 @@ import ManualEntry from "../pages/Admin/ManualEntry";
 import AdminRecoveredItems from "../pages/Admin/AdminRecoveredItems";
 import ClaimedItems from "../pages/Admin/ClaimedItems";
 import AdminResolvedItems from "../pages/Admin/AdminResolvedItems";
+import SearchedResults from "../pages/User/SearchedResults";
 
 
 export const router = createBrowserRouter([
@@ -98,6 +99,10 @@ export const router = createBrowserRouter([
             {
                 path: "search",
                 element: <Search></Search>
+            },
+            {
+                path: "search-results",
+                element: <SearchedResults></SearchedResults>
             },
             {
                 path: "report-lost",
