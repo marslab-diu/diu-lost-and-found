@@ -834,7 +834,117 @@ async function run() {
         }
       }
     );
+        // get the status stored found items
+    app.get("/found-reports/stored", verifyFirebaseToken, async (req, res) => {
+      try {
+        const pipeline = [
+          {
+            $match: { status: "stored" },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "reportedBy",
+              foreignField: "_id",
+              as: "reportedByUser",
+            },
+          },
+          {
+            $unwind: "$reportedByUser",
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+        ];
 
+        const storedItems = await foundItemsCollection
+          .aggregate(pipeline)
+          .toArray();
+        res.send(storedItems);
+      } catch (error) {
+        console.error("Error fetching stored items:", error);
+        res.status(500).send({
+          error: true,
+          message: "Failed to fetch stored items",
+        });
+      }
+    });
+
+    // update to resolved
+    app.patch(
+      "/found-reports/:reportId/handover",
+      verifyFirebaseToken,
+      async (req, res) => {
+        try {
+          const { reportId } = req.params;
+          const { receiver, handedOverBy } = req.body;
+
+          if (!receiver || !handedOverBy) {
+            return res.status(400).send({
+              error: true,
+              message: "Receiver information and admin email are required",
+            });
+          }
+
+          // check if receiver exists in users collection
+          let receiverUser = await usersCollection.findOne({
+            email: receiver.email.trim().toLowerCase(),
+          });
+
+          if (!receiverUser) {
+            // create receiver user
+            const receiverProfile = {
+              email: receiver.email.trim().toLowerCase(),
+              name: receiver.name,
+              universityId: receiver.universityId,
+              phone: receiver.phone,
+              department: receiver.department,
+              role: "user",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+
+            const result = await usersCollection.insertOne(receiverProfile);
+            receiverUser = await usersCollection.findOne({
+              _id: result.insertedId,
+            });
+          }
+
+          // update found report status
+          const updateResult = await foundItemsCollection.updateOne(
+            { reportId, status: "stored" },
+            {
+              $set: {
+                status: "resolved",
+                takenBy: receiverUser._id,
+                handedOverAt: new Date(),
+                handedOverBy,
+                statusUpdatedAt: new Date(),
+              },
+            }
+          );
+
+          if (updateResult.modifiedCount > 0) {
+            res.send({
+              success: true,
+              message: "Item handed over successfully",
+            });
+          } else {
+            res.status(404).send({
+              error: true,
+              message: "Item not found or not in stored status",
+            });
+          }
+        } catch (error) {
+          console.error("Error handing over item:", error);
+          res.status(500).send({
+            error: true,
+            message: "Failed to hand over item",
+            details: error.message,
+          });
+        }
+      }
+    );
     app.get("/test", async (req, res) => {
       res.send("Test route is working");
     });
