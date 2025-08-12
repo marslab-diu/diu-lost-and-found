@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResolvedItems = () => {
+const AdminResolvedItems = () => {
     return (
         <div>
             this is Resolved Items page
@@ -8,4 +8,4 @@ const ResolvedItems = () => {
     );
 };
 
-export default ResolvedItems;
+export default AdminResolvedItems;

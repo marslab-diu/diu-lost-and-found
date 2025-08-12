@@ -27,7 +27,7 @@ import FoundReports from "../pages/Admin/FoundReports";
 import ManualEntry from "../pages/Admin/ManualEntry";
 import AdminRecoveredItems from "../pages/Admin/AdminRecoveredItems";
 import ClaimedItems from "../pages/Admin/ClaimedItems";
-import ResolvedItems from "../pages/Admin/ResolvedItems";
+import AdminResolvedItems from "../pages/Admin/AdminResolvedItems";
 
 
 export const router = createBrowserRouter([
@@ -160,7 +160,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "resolved-items",
-                element: <ResolvedItems></ResolvedItems>
+                element: <AdminResolvedItems></AdminResolvedItems>
             }
         ]
 
