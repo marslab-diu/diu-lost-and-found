@@ -12,9 +12,11 @@
 
 <p>
   <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version" />
-  <img src="https://img.shields.io/badge/status-UI%20Complete-green" alt="Status" />
+  <img src="https://img.shields.io/badge/status-Deployed-green" alt="Status" />
   <img src="https://img.shields.io/badge/license-Proprietary-purple" alt="License" />
 </p>
+
+
 
 <p>
   <strong>🎨 UI Design Phase: Complete</strong><br>
